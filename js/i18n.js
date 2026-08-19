@@ -9,12 +9,14 @@ var translations = {
   en: {
     intro: "I am Dandelion, a Ukrainian modder focused on atmospheric mechanics, small details, and captivating gameplay.",
     intro2: "I create mods, data packs, and resource packs for Minecraft Java Edition, mostly working on mod loaders such as Fabric and NeoForge, occasionally Forge. Do I plan to expand toward Bedrock Edition? I don't see a reason for that yet, but it all depends on the future community and its needs.",
-    versions_title: "Supported versions:"
+    versions_title: "Supported versions:",
+    col_datapacks: "data packs"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
     intro2: "я створюю моди, дата-паки та ресурс-паки для java-видання майнкрафту, здебільшого працюючи на таких модлоадерах, як fabric та neoforge, інколи forge. чи планую я розвиватися у бік bedrock-видання? поки не бачу на то причин, але все залежить від майбутньої спільноти та її потреб",
-    versions_title: "Підтримувані версії:"
+    versions_title: "Підтримувані версії:",
+    col_datapacks: "пакети даних"
   }
 };
 

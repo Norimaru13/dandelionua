@@ -13,6 +13,7 @@
   <script src="assets/embed/apply.js"></script>
 </head>
 <body>
+  <div class="site-top">
   <header class="site-header">
     <div class="menu-wrap">
       <button type="button" class="menu-btn tex-btn" data-menu-toggle aria-expanded="false">
@@ -63,11 +64,18 @@
     </div>
   </header>
   <div class="header-stripes"></div>
+  </div>
+  <div class="site-scroll">
   <main class="page-body">
     <div class="home-copy">
       <p class="intro" data-i18n="intro">I am Dandelion, a Ukrainian modder focused on atmospheric mechanics, small details, and captivating gameplay.</p>
       <p class="intro" data-i18n="intro2">I create mods, data packs, and resource packs for Minecraft Java Edition, mostly working on mod loaders such as Fabric and NeoForge, occasionally Forge. Do I plan to expand toward Bedrock Edition? I don't see a reason for that yet, but it all depends on the future community and its needs.</p>
     </div>
+    <p class="color-test">
+      <span class="text-a">eebd3b</span>
+      <span class="text-b">e29020</span>
+      <span class="text-c">c46002</span>
+    </p>
     <div class="versions-wrap">
       <table class="versions">
         <thead>
@@ -76,10 +84,10 @@
           </tr>
           <tr>
             <th></th>
-            <th class="text-a">fabric</th>
-            <th class="text-b">neoforge</th>
-            <th class="text-c">forge</th>
-            <th>data packs</th>
+            <th>fabric</th>
+            <th>neoforge</th>
+            <th>forge</th>
+            <th data-i18n="col_datapacks">data packs</th>
           </tr>
         </thead>
         <tbody>
@@ -164,6 +172,7 @@
       </table>
     </div>
   </main>
+  </div>
   <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
