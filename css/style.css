@@ -28,8 +28,6 @@ body {
   min-height: 0;
   overflow-x: hidden;
   overflow-y: scroll;
-  scrollbar-width: auto;
-  scrollbar-color: #28402f #375942;
 }
 
 .site-stack {
@@ -57,21 +55,47 @@ body {
 
 .site-scroll::-webkit-scrollbar {
   width: 96px;
-}
-
-.site-scroll::-webkit-scrollbar-button {
-  display: none;
-  width: 0;
-  height: 0;
-}
-
-.site-scroll::-webkit-scrollbar-track {
+  height: 96px;
   background: #375942;
+}
+
+.site-scroll::-webkit-scrollbar-track,
+.site-scroll::-webkit-scrollbar-track-piece {
+  background: #375942;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .site-scroll::-webkit-scrollbar-thumb {
   background: #28402f;
+  border: 0;
   border-radius: 0;
+  box-shadow: none;
+}
+
+.site-scroll::-webkit-scrollbar-button,
+.site-scroll::-webkit-scrollbar-button:single-button,
+.site-scroll::-webkit-scrollbar-button:vertical:start:decrement,
+.site-scroll::-webkit-scrollbar-button:vertical:end:increment,
+.site-scroll::-webkit-scrollbar-button:vertical:start:increment,
+.site-scroll::-webkit-scrollbar-button:vertical:end:decrement {
+  display: none;
+  width: 0;
+  height: 0;
+  background: transparent;
+  border: 0;
+}
+
+.site-scroll::-webkit-scrollbar-corner {
+  background: #375942;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  .site-scroll {
+    scrollbar-width: auto;
+    scrollbar-color: #28402f #375942;
+  }
 }
 
 button {
