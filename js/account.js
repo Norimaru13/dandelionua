@@ -7,6 +7,8 @@
   var PAGE = "home";
   var token = localStorage.getItem(TOKEN_KEY) || "";
   var nick = "";
+  var isAdmin = false;
+  var authListeners = [];
 
   function cfg() {
     return window.DANDELION_SUPABASE || {};
@@ -48,12 +50,16 @@
     return /^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9_.-]{3,20}$/.test(value);
   }
 
-  function setSession(nextToken, nextNick) {
+  function setSession(nextToken, nextNick, nextAdmin) {
     token = nextToken || "";
     nick = nextNick || "";
+    isAdmin = Boolean(nextAdmin);
     if (token) localStorage.setItem(TOKEN_KEY, token);
     else localStorage.removeItem(TOKEN_KEY);
     paint();
+    authListeners.forEach(function (fn) {
+      try { fn(); } catch (e) {}
+    });
   }
 
   function $(sel) {
@@ -72,6 +78,9 @@
     if (sessionBox) sessionBox.hidden = !nick;
     if (sessionNick) sessionNick.textContent = nick;
     if (likeBtn) likeBtn.classList.toggle("needs-login", !nick);
+    document.querySelectorAll("[data-admin-only]").forEach(function (el) {
+      el.hidden = !isAdmin;
+    });
   }
 
   function setError(code) {
@@ -110,7 +119,7 @@
       setError((data && data.error) || "fail");
       return;
     }
-    setSession(data.token, data.nick);
+    setSession(data.token, data.nick, data.is_admin);
     closeModal();
     loadLikes();
   }
@@ -195,8 +204,10 @@
     }
     rpc("account_me", { p_token: token })
       .then(function (data) {
-        if (data && data.ok) nick = data.nick;
-        else setSession("", "");
+        if (data && data.ok) {
+          nick = data.nick;
+          isAdmin = Boolean(data.is_admin);
+        } else setSession("", "");
         paint();
         loadLikes();
       })
@@ -246,4 +257,13 @@
 
     restore();
   });
+
+  window.DandelionAuth = {
+    token: function () { return token; },
+    isAdmin: function () { return isAdmin; },
+    onChange: function (fn) {
+      if (typeof fn === "function") authListeners.push(fn);
+    }
+  };
+  window.dandelionRpc = rpc;
 })();

@@ -28,7 +28,18 @@ var translations = {
     err_need_login: "log in to like",
     err_fail: "could not reach the server",
     err_auth: "log in to like",
-    err_no_db: "could not reach the server"
+    err_no_db: "could not reach the server",
+    post_create: "Create publication",
+    post_title_en: "title (EN)",
+    post_title_ua: "title (UA)",
+    post_body_en: "description (EN)",
+    post_body_ua: "description (UA)",
+    post_photos: "photos (up to 4)",
+    post_publish: "publish",
+    err_empty_post: "enter a title",
+    err_forbidden: "only the admin can publish",
+    err_photo_big: "photo is too large (max ~500 KB)",
+    err_photo_type: "photo: jpg, png, webp or gif"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
@@ -52,7 +63,18 @@ var translations = {
     err_need_login: "щоб поставити вподобайку, увійди в профіль",
     err_fail: "не вдалося зв’язатися з сервером",
     err_auth: "щоб поставити вподобайку, увійди в профіль",
-    err_no_db: "не вдалося зв’язатися з сервером"
+    err_no_db: "не вдалося зв’язатися з сервером",
+    post_create: "Створити публікацію",
+    post_title_en: "назва (EN)",
+    post_title_ua: "назва (UA)",
+    post_body_en: "опис (EN)",
+    post_body_ua: "опис (UA)",
+    post_photos: "фото (до 4)",
+    post_publish: "опублікувати",
+    err_empty_post: "введи назву",
+    err_forbidden: "публікувати може лише адміністратор",
+    err_photo_big: "фото завелике (макс. близько 500 КБ)",
+    err_photo_type: "фото: jpg, png, webp або gif"
   }
 };
 

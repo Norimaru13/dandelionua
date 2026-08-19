@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=34">
+  <link rel="stylesheet" href="css/style.css?v=35">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -201,6 +201,8 @@
         </tbody>
       </table>
     </div>
+    <button type="button" class="post-create-btn" data-post-create data-admin-only hidden data-i18n="post_create">Create publication</button>
+    <section class="posts" data-posts></section>
   </main>
     <aside class="sidebar sidebar-end" aria-hidden="true"></aside>
   </div>
@@ -239,9 +241,41 @@
       </div>
     </div>
   </div>
+  <div class="account-modal" data-post-modal hidden>
+    <div class="account-dialog post-dialog">
+      <button type="button" class="account-close" data-post-close data-i18n="account_close">close</button>
+      <form data-post-form>
+        <label>
+          <span data-i18n="post_title_en">title (EN)</span>
+          <input name="title_en" maxlength="120">
+        </label>
+        <label>
+          <span data-i18n="post_title_ua">title (UA)</span>
+          <input name="title_ua" maxlength="120">
+        </label>
+        <label>
+          <span data-i18n="post_body_en">description (EN)</span>
+          <textarea name="body_en" rows="4" maxlength="4000"></textarea>
+        </label>
+        <label>
+          <span data-i18n="post_body_ua">description (UA)</span>
+          <textarea name="body_ua" rows="4" maxlength="4000"></textarea>
+        </label>
+        <label>
+          <span data-i18n="post_photos">photos</span>
+          <input name="photos" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+        </label>
+        <p class="account-error" data-post-error></p>
+        <div class="account-actions">
+          <button type="submit" data-i18n="post_publish">publish</button>
+        </div>
+      </form>
+    </div>
+  </div>
   <script src="js/config.js"></script>
-  <script src="js/i18n.js?v=34"></script>
-  <script src="js/account.js?v=34"></script>
-  <script src="js/main.js?v=34"></script>
+  <script src="js/i18n.js?v=35"></script>
+  <script src="js/account.js?v=35"></script>
+  <script src="js/posts.js?v=35"></script>
+  <script src="js/main.js?v=35"></script>
 </body>
 </html>
