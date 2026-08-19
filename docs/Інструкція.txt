@@ -64,7 +64,13 @@
 
 ---
 
-## 5. Поточний стан (етап 12)
+## 5. Поточний стан (етап 14)
+
+Лічильники готові до Supabase. У `js/config.js` треба вставити Project URL і anon key.
+Текстури на Pages з’являться після `push-site.bat` (PNG через git).
+
+Репозиторій: https://github.com/Norimaru13/dandelionua  
+Сайт (після пушу): https://norimaru13.github.io/dandelionua/
 
 На сайті зараз є:
 - Хедер `#6371af`, удвічі вищий за етап 04
