@@ -172,7 +172,12 @@
   }
 
   function loadPosts() {
-    rpc("list_posts", { p_token: token() || null })
+    var tok = token();
+    var req = tok ? rpc("list_posts", { p_token: tok }) : rpc("list_posts", {});
+    req
+      .catch(function () {
+        return rpc("list_posts", {});
+      })
       .then(function (data) {
         if (data && data.ok) {
           renderPosts(data.posts || []);

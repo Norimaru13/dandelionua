@@ -17,6 +17,7 @@ alter table post_likes enable row level security;
 alter table post_views enable row level security;
 
 drop function if exists list_posts();
+drop function if exists list_posts(uuid);
 
 create or replace function list_posts(p_token uuid default null)
 returns json
