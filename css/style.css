@@ -218,12 +218,15 @@ button {
 }
 
 .side-slot {
+  display: block;
+  box-sizing: border-box;
   width: 36px;
   height: 36px;
   padding: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .side-slot img {
