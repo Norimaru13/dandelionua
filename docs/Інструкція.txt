@@ -63,7 +63,7 @@
 
 ---
 
-## 5. Поточний стан (етап 17)
+## 5. Поточний стан (етап 18)
 
 Тестову `post.html` прибрано. Кнопки кульбаби і мови мають чотири стани. Іконки меню з’являються тільки коли меню відкрите.
 
@@ -78,10 +78,12 @@
 - Меню кульбаби, зліва направо: Modrinth, CurseForge, MCreator, Telegram, Discord, Reddit
 - Modrinth веде на https://modrinth.com/user/dandelion_ua (нова вкладка). Решта без посилань
 - Іконки меню не видно, поки меню закрите
-- По центру `assets/dandelion_ua_header.png`
+- Усі картинки лежать у `assets/icons/`
+- По центру `assets/icons/dandelion_ua_header.png`
 - Посередині тіла текст про автора
 - Кнопка мови: default / hover / press / active (`language_button_active.png`, коли меню мови відкрите)
-- Іконка вкладки: `assets/dandelion_ua_site_logo.png`
+- Discord у меню: `assets/icons/discord_link.png`
+- Іконка вкладки: `assets/icons/dandelion_ua_site_logo.png`
 
 Інструкція і стадії — у папці `docs/`.
 

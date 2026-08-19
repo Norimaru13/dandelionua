@@ -9,12 +9,12 @@ else:
     out.mkdir(parents=True)
 
 files = {
-    "button": "assets/dandelion_button.png",
-    "button_hover": "assets/dandelion_button_hovered.png",
-    "button_press": "assets/dandelion_button_pressed.png",
-    "header": "assets/dandelion_ua_header.png",
-    "logo": "assets/dandelion_ua_site_logo.png",
-    "lang": "assets/language_button.png",
+    "button": "assets/icons/dandelion_button.png",
+    "button_hover": "assets/icons/dandelion_button_hovered.png",
+    "button_press": "assets/icons/dandelion_button_pressed.png",
+    "header": "assets/icons/dandelion_ua_header.png",
+    "logo": "assets/icons/dandelion_ua_site_logo.png",
+    "lang": "assets/icons/language_button.png",
 }
 
 counts = {}
