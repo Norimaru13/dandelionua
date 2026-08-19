@@ -51,12 +51,12 @@ body {
 }
 
 .sidebar-end {
-  flex-basis: calc(20vw - 24px);
-  width: calc(20vw - 24px);
+  flex-basis: calc(20vw - 96px);
+  width: calc(20vw - 96px);
 }
 
 .site-scroll::-webkit-scrollbar {
-  width: 24px;
+  width: 96px;
 }
 
 .site-scroll::-webkit-scrollbar-button {

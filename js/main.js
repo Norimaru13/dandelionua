@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
+  var clickSrc = "assets/minecraft_click.mp3";
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("button, a.side-slot")) return;
+    var audio = new Audio(clickSrc);
+    audio.play().catch(function () {});
+  });
+
   var menuToggle = document.querySelector("[data-menu-toggle]");
   var sideMenu = document.querySelector("[data-side-menu]");
   var langToggle = document.querySelector("[data-lang-toggle]");
