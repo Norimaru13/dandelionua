@@ -49,7 +49,13 @@ var translations = {
     nav_projects: "Projects",
     nav_publications: "Publications",
     feed_more: "see more",
-    post_kind: "type"
+    post_kind: "type",
+    social_modrinth: "Modrinth",
+    social_curseforge: "CurseForge",
+    social_mcreator: "MCreator",
+    social_telegram: "Telegram",
+    social_discord: "Discord",
+    social_reddit: "Reddit"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
@@ -94,7 +100,13 @@ var translations = {
     nav_projects: "Проекти",
     nav_publications: "Публікації",
     feed_more: "дивитись більше",
-    post_kind: "тип"
+    post_kind: "тип",
+    social_modrinth: "Modrinth",
+    social_curseforge: "CurseForge",
+    social_mcreator: "MCreator",
+    social_telegram: "Телеграм",
+    social_discord: "Діскорд",
+    social_reddit: "Реддіт"
   }
 };
 

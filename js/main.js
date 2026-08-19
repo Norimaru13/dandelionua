@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
   var clickSrc = "assets/minecraft_click.mp3";
   document.addEventListener("click", function (e) {
-    if (!e.target.closest("button, a.side-slot")) return;
+    if (!e.target.closest("button, .side-slot, .page-nav-menu a")) return;
     var audio = new Audio(clickSrc);
     audio.play().catch(function () {});
-  });
+  }, true);
 
   var menuToggle = document.querySelector("[data-menu-toggle]");
   var sideMenu = document.querySelector("[data-side-menu]");
@@ -66,6 +66,27 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!e.target.closest(".lang-switch")) setOpen(langMenu, langToggle, false);
     if (!e.target.closest("[data-page-nav]")) setOpen(pageNavMenu, pageNavToggle, false);
   });
+
+  var tip = document.createElement("div");
+  tip.className = "social-tip";
+  document.body.appendChild(tip);
+
+  function hideTip() {
+    tip.classList.remove("is-on");
+  }
+
+  document.querySelectorAll(".side-slot[data-i18n-tip]").forEach(function (el) {
+    el.addEventListener("mouseenter", function () {
+      tip.textContent = t(el.getAttribute("data-i18n-tip"));
+      var r = el.getBoundingClientRect();
+      tip.style.left = r.left + r.width / 2 + "px";
+      tip.style.top = r.bottom + 8 + "px";
+      tip.classList.add("is-on");
+    });
+    el.addEventListener("mouseleave", hideTip);
+    el.addEventListener("click", hideTip);
+  });
+  window.addEventListener("scroll", hideTip, true);
 
   var versions = document.querySelector("[data-versions]");
   var versionsToggle = document.querySelector("[data-versions-toggle]");

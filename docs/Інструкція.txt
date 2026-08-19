@@ -65,7 +65,7 @@
 
 ---
 
-## 5. Поточний стан (етап 37)
+## 5. Поточний стан (етап 38)
 
 Тестову `post.html` прибрано. Кнопки кульбаби і мови мають чотири стани. Іконки меню з’являються тільки коли меню відкрите.
 
@@ -78,7 +78,8 @@
 - Три смужки між хедером і тілом, зверху вниз: `#96a5d5`, `#0057b8`, `#ffd700`
 - Кнопка-кульбаба: default / hover / press / active (`dandelion_button_active.png`, коли меню відкрите)
 - Меню кульбаби, зліва направо: Modrinth, CurseForge, MCreator, Telegram, Discord, Reddit
-- Modrinth веде на https://modrinth.com/user/dandelion_ua (нова вкладка). Решта без посилань
+- Посилання (нова вкладка): Modrinth https://modrinth.com/user/dandelion_ua ; CurseForge https://www.curseforge.com/members/dandelion_ua/projects ; MCreator https://mcreator.net/user/800904/dandelionua ; Telegram https://t.me/dandelion_ua_tg . Discord і Reddit поки без посилань
+- Наведення на іконку мережі показує назву мовою сайту
 - Іконки меню не видно, поки меню закрите
 - Усі картинки лежать у `assets/icons/`
 - По центру `assets/icons/dandelion_ua_header.png`
@@ -90,12 +91,14 @@
 - Таблиця: лінії `#28402f`; заливка всередині `#375942`, зверху і зліва `#578c67`; текст `#28402f`
 - Таблиця на всю ширину між сайдбарами
 - Таблиця: fabric 26.2 і 26.1.2; neoforge 26.2, 26.1.2, 1.21.8, 1.21.1; forge 1.20.1 і 1.19.4; data packs / пакети даних — усі зі списку; resource packs / пакети ресурсів — клітинки порожні, поки не дам галочки
-- Меню мови виїжджає вліво з кнопки, без фону; поки два прямокутники (червоний EN, синій UA)
+- Меню мови виїжджає вліво з кнопки, без фону; прапори `en_lang.png` і `uk_lang.png`
 - Футер не фіксований, колір як хедер `#6371af`, текст про Норімару і Данделіона
 - Галочка / хрестик: `assets/icons/yes_icon.png`, `assets/icons/no_icon.png`
 - Кнопка мови: default / hover / press / active (`language_button_active.png`, коли меню мови відкрите)
 - Discord у меню: `assets/icons/discord_link.png`
+- Telegram у меню: `assets/icons/telegram_link.png`
 - CurseForge у меню: `assets/icons/curseforge_link.png`
+- Курсор: `assets/icons/cursor.png` (тестова текстура)
 - Іконка вкладки: `assets/icons/dandelion_ua_site_logo.png`
 
 - Кнопка «увійти» в хедері. Без профілю сайт дивитися можна, лайк — ні.
@@ -103,7 +106,7 @@
 - Під таблицею вкладки Проекти / Публікації (за замовчуванням Проекти), по 3 останніх і «дивитись більше»
 - Сторінки `projects.html` і `publications.html` — повний список
 - Клік по центральній текстурі хедера веде на головну
-- Сірий виступ у хедері зліва — меню сторінок
+- Сірий виступ у хедері зліва — меню сторінок, виїжджає вниз з анімацією
 - Клік поза будь-яким меню закриває його
 - Кнопка мови лівіше, профіль правіше
 - Час поста без секунд. Тип поста: project / publication. SQL: `docs/post_kind.sql`
