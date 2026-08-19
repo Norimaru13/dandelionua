@@ -9,15 +9,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="assets/embed/manifest.js"></script>
+  <script src="assets/embed/apply.js"></script>
 </head>
 <body>
   <header class="site-header">
     <div class="menu-wrap">
       <button type="button" class="menu-btn" data-menu-toggle aria-expanded="false">
         <span class="menu-btn-icon">
-          <img class="icon-off" src="assets/dandelion_button.png" alt="">
-          <img class="icon-hover" src="assets/dandelion_button_hovered.png" alt="">
-          <img class="icon-press" src="assets/dandelion_button_pressed.png" alt="">
+          <img class="icon-off" src="assets/dandelion_button.png" data-img="button" alt="">
+          <img class="icon-hover" src="assets/dandelion_button_hovered.png" data-img="button_hover" alt="">
+          <img class="icon-press" src="assets/dandelion_button_pressed.png" data-img="button_press" alt="">
         </span>
       </button>
       <aside class="side-menu" data-side-menu>
@@ -35,10 +37,10 @@
         </button>
       </aside>
     </div>
-    <img class="header-title" src="assets/dandelion_ua_header.png" alt="">
+    <img class="header-title" src="assets/dandelion_ua_header.png" data-img="header" alt="">
     <div class="lang-switch">
       <button type="button" class="lang-toggle" data-lang-toggle aria-expanded="false">
-        <img src="assets/language_button.png" alt="">
+        <img src="assets/language_button.png" data-img="lang" alt="">
       </button>
       <div class="lang-menu" data-lang-menu>
         <button type="button" class="lang-btn" data-lang="en">EN</button>
