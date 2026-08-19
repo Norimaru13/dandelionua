@@ -48,7 +48,7 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 96px;
+  width: 24px;
   background: transparent;
   z-index: 5;
 }
@@ -56,7 +56,7 @@ body {
 .scroll-thumb {
   position: absolute;
   left: 0;
-  width: 96px;
+  width: 24px;
   background: #28402f;
   border-radius: 0;
 }
