@@ -12,7 +12,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #67a77a;
+  background: #578c67;
   font-family: "Tiny5", monospace;
 }
 
@@ -180,13 +180,15 @@ button {
   align-items: center;
   justify-content: flex-start;
   gap: 28px;
+  margin: 0 20vw;
   padding: 24px;
+  background: #67a77a;
 }
 
 .home-copy {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
   max-width: 28em;
 }
 
@@ -205,7 +207,11 @@ button {
 
 .versions {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 2px solid #96a5d5;
+  border-radius: 8px;
+  overflow: hidden;
   font-size: 18px;
 }
 
@@ -215,6 +221,22 @@ button {
   text-align: center;
   vertical-align: middle;
   font-weight: normal;
+  background: #8491bd;
+  border-right: 1px solid #96a5d5;
+  border-bottom: 1px solid #96a5d5;
+}
+
+.versions thead th,
+.versions th[scope="row"] {
+  background: #6371af;
+}
+
+.versions tr > *:last-child {
+  border-right: 0;
+}
+
+.versions tbody tr:last-child > * {
+  border-bottom: 0;
 }
 
 .versions-title {
