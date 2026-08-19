@@ -63,7 +63,7 @@
 
 ---
 
-## 5. Поточний стан (етап 18)
+## 5. Поточний стан (етап 19)
 
 Тестову `post.html` прибрано. Кнопки кульбаби і мови мають чотири стани. Іконки меню з’являються тільки коли меню відкрите.
 
@@ -80,7 +80,9 @@
 - Іконки меню не видно, поки меню закрите
 - Усі картинки лежать у `assets/icons/`
 - По центру `assets/icons/dandelion_ua_header.png`
-- Посередині тіла текст про автора
+- Посередині тіла два абзаци про автора + таблиця підтримуваних версій
+- Таблиця: fabric 26.2 і 26.1.2; neoforge 26.2, 26.1.2, 1.21.8, 1.21.1; forge 1.20.1; datapacks — усі зі списку
+- Галочка / хрестик: `assets/icons/yes_icon.png`, `assets/icons/no_icon.png`
 - Кнопка мови: default / hover / press / active (`language_button_active.png`, коли меню мови відкрите)
 - Discord у меню: `assets/icons/discord_link.png`
 - Іконка вкладки: `assets/icons/dandelion_ua_site_logo.png`

@@ -178,17 +178,63 @@ button {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 28px;
   padding: 24px;
 }
 
+.home-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 28em;
+}
+
 .intro {
   margin: 0;
-  max-width: 28em;
   text-align: center;
   font-size: 22px;
   line-height: 1.5;
+}
+
+.versions-wrap {
+  width: 100%;
+  max-width: 40em;
+  overflow-x: auto;
+}
+
+.versions {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 18px;
+}
+
+.versions th,
+.versions td {
+  padding: 6px 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-weight: normal;
+}
+
+.versions-title {
+  text-align: left;
+  font-size: 22px;
+  padding-bottom: 10px;
+}
+
+.versions th[scope="row"] {
+  text-align: left;
+  white-space: nowrap;
+}
+
+.mark {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0 auto;
+  object-fit: contain;
+  image-rendering: pixelated;
 }
 
 .side-menu-clip {
