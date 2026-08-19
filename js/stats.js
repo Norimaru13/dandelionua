@@ -1,7 +1,7 @@
 /**
  * Перегляди і вподобайки.
- * Працює через server.py (спільні цифри).
- * Якщо сервера немає — лише цей браузер, localStorage.
+ * 1) Supabase — спільні цифри для всіх (після налаштування).
+ * 2) Якщо Supabase ще порожній — localStorage, лише цей браузер.
  */
 (function () {
   var PAGE = document.body.getAttribute("data-page-id");
@@ -50,18 +50,10 @@
     if (likeBtn) likeBtn.classList.toggle("is-liked", Boolean(state.liked));
   }
 
-  function api(path, body) {
-    return fetch(path, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Visitor-Id": visitorId()
-      },
-      body: JSON.stringify(body)
-    }).then(function (res) {
-      if (!res.ok) throw new Error("api");
-      return res.json();
-    });
+  function supabaseClient() {
+    var cfg = window.DANDELION_SUPABASE || {};
+    if (!cfg.url || !cfg.anonKey || !window.supabase) return null;
+    return window.supabase.createClient(cfg.url, cfg.anonKey);
   }
 
   function viewLocal() {
@@ -87,18 +79,37 @@
     return pack.page;
   }
 
-  document.addEventListener("DOMContentLoaded", function () {
-    api("/api/view", { page: PAGE }).then(render).catch(function () {
+  function recordView() {
+    var db = supabaseClient();
+    if (!db) {
+      render(viewLocal());
+      return Promise.resolve();
+    }
+    return db.rpc("record_view", { p_page: PAGE, p_visitor: visitorId() }).then(function (res) {
+      if (res.error) throw res.error;
+      render(res.data);
+    }).catch(function () {
       render(viewLocal());
     });
+  }
 
-    var likeBtn = document.querySelector("[data-like]");
-    if (!likeBtn) return;
-
-    likeBtn.addEventListener("click", function () {
-      api("/api/like", { page: PAGE }).then(render).catch(function () {
-        render(toggleLikeLocal());
-      });
+  function toggleLike() {
+    var db = supabaseClient();
+    if (!db) {
+      render(toggleLikeLocal());
+      return Promise.resolve();
+    }
+    return db.rpc("toggle_like", { p_page: PAGE, p_visitor: visitorId() }).then(function (res) {
+      if (res.error) throw res.error;
+      render(res.data);
+    }).catch(function () {
+      render(toggleLikeLocal());
     });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    recordView();
+    var likeBtn = document.querySelector("[data-like]");
+    if (likeBtn) likeBtn.addEventListener("click", toggleLike);
   });
 })();
