@@ -185,6 +185,7 @@ button {
   max-width: calc(100% - 560px);
   object-fit: contain;
   image-rendering: pixelated;
+  pointer-events: none;
 }
 
 .lang-switch {
@@ -438,14 +439,17 @@ button {
 
 .header-tools {
   position: relative;
-  z-index: 3;
+  z-index: 4;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 36px;
 }
 
 .account-btn {
+  position: relative;
+  z-index: 5;
   max-width: 120px;
+  margin-right: 12px;
   padding: 8px 12px;
   border: 0;
   background: #96a5d5;

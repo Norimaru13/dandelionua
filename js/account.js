@@ -26,15 +26,26 @@
       },
       body: JSON.stringify(body || {})
     }).then(function (res) {
-      return res.json().then(function (data) {
-        if (!res.ok) throw data;
+      return res.text().then(function (text) {
+        var data = null;
+        if (text) {
+          try {
+            data = JSON.parse(text);
+          } catch (e) {
+            data = { error: "fail", message: text };
+          }
+        }
+        if (!res.ok) {
+          if (res.status === 404) throw { error: "need_sql" };
+          throw data || { error: "fail" };
+        }
         return data;
       });
     });
   }
 
   function nickOk(value) {
-    return /^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9_]{3,20}$/.test(value);
+    return /^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9_.-]{3,20}$/.test(value);
   }
 
   function setSession(nextToken, nextNick) {
@@ -61,7 +72,6 @@
     if (sessionBox) sessionBox.hidden = !nick;
     if (sessionNick) sessionNick.textContent = nick;
     if (likeBtn) likeBtn.classList.toggle("needs-login", !nick);
-    if (modal && !modal.hidden && window.applyI18n) applyI18n();
   }
 
   function setError(code) {
@@ -117,8 +127,8 @@
     }
     rpc("account_register", { p_nick: f.nick, p_password: f.password })
       .then(afterAuth)
-      .catch(function () {
-        setError("fail");
+      .catch(function (err) {
+        setError((err && err.error) || "fail");
       });
   }
 
@@ -126,8 +136,8 @@
     var f = fields();
     rpc("account_login", { p_nick: f.nick, p_password: f.password })
       .then(afterAuth)
-      .catch(function () {
-        setError("fail");
+      .catch(function (err) {
+        setError((err && err.error) || "fail");
       });
   }
 

@@ -30,14 +30,14 @@ returns boolean
 language sql
 immutable
 as $$
-  select p_nick ~ '^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9_]{3,20}$';
+  select p_nick ~ '^[A-Za-zА-Яа-яІіЇїЄєҐґ0-9_.-]{3,20}$';
 $$;
 
 create or replace function nick_taken(p_nick text)
 returns boolean
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 begin
   return exists (
@@ -50,7 +50,7 @@ create or replace function account_register(p_nick text, p_password text)
 returns json
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   uid uuid;
@@ -67,7 +67,7 @@ begin
   end if;
 
   insert into accounts (nick, password_hash)
-  values (p_nick, crypt(p_password, gen_salt('bf')))
+  values (p_nick, extensions.crypt(p_password, extensions.gen_salt('bf')))
   returning id into uid;
 
   insert into sessions (account_id) values (uid) returning token into tok;
@@ -82,7 +82,7 @@ create or replace function account_login(p_nick text, p_password text)
 returns json
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   acc accounts%rowtype;
@@ -92,7 +92,7 @@ begin
   from accounts
   where lower(nick) = lower(p_nick);
 
-  if not found or acc.password_hash <> crypt(p_password, acc.password_hash) then
+  if not found or acc.password_hash <> extensions.crypt(p_password, acc.password_hash) then
     return json_build_object('ok', false, 'error', 'bad_login');
   end if;
 
@@ -105,7 +105,7 @@ create or replace function account_logout(p_token uuid)
 returns json
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 begin
   delete from sessions where token = p_token;
@@ -117,7 +117,7 @@ create or replace function account_me(p_token uuid)
 returns json
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   n text;
@@ -138,7 +138,7 @@ create or replace function get_likes(p_page text, p_token uuid default null)
 returns json
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   uid uuid;
@@ -168,7 +168,7 @@ create or replace function toggle_like_account(p_page text, p_token uuid)
 returns json
 language plpgsql
 security definer
-set search_path = public
+set search_path = public, extensions
 as $$
 declare
   uid uuid;
