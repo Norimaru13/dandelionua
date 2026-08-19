@@ -10,6 +10,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var sideMenu = document.querySelector("[data-side-menu]");
   var langToggle = document.querySelector("[data-lang-toggle]");
   var langMenu = document.querySelector("[data-lang-menu]");
+  var pageNavToggle = document.querySelector("[data-page-nav-toggle]");
+  var pageNavMenu = document.querySelector("[data-page-nav-menu]");
 
   function setOpen(el, toggle, open) {
     if (!el) return;
@@ -20,19 +22,27 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function closeOtherMenus(except) {
+    if (except !== "dandelion") setOpen(sideMenu, menuToggle, false);
+    if (except !== "lang") setOpen(langMenu, langToggle, false);
+    if (except !== "page") setOpen(pageNavMenu, pageNavToggle, false);
+  }
+
   if (menuToggle && sideMenu) {
-    menuToggle.addEventListener("click", function () {
+    menuToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
       var open = !sideMenu.classList.contains("is-open");
+      closeOtherMenus("dandelion");
       setOpen(sideMenu, menuToggle, open);
-      if (open) setOpen(langMenu, langToggle, false);
     });
   }
 
   if (langToggle && langMenu) {
-    langToggle.addEventListener("click", function () {
+    langToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
       var open = !langMenu.classList.contains("is-open");
+      closeOtherMenus("lang");
       setOpen(langMenu, langToggle, open);
-      if (open) setOpen(sideMenu, menuToggle, false);
     });
 
     langMenu.querySelectorAll(".lang-btn").forEach(function (btn) {
@@ -41,6 +51,21 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+
+  if (pageNavToggle && pageNavMenu) {
+    pageNavToggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      var open = !pageNavMenu.classList.contains("is-open");
+      closeOtherMenus("page");
+      setOpen(pageNavMenu, pageNavToggle, open);
+    });
+  }
+
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest(".menu-wrap")) setOpen(sideMenu, menuToggle, false);
+    if (!e.target.closest(".lang-switch")) setOpen(langMenu, langToggle, false);
+    if (!e.target.closest("[data-page-nav]")) setOpen(pageNavMenu, pageNavToggle, false);
+  });
 
   var versions = document.querySelector("[data-versions]");
   var versionsToggle = document.querySelector("[data-versions-toggle]");

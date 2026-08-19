@@ -19,8 +19,10 @@ body {
 }
 
 .site-top {
+  position: relative;
   flex-shrink: 0;
   z-index: 20;
+  overflow: visible;
 }
 
 .site-pane {
@@ -95,9 +97,11 @@ button {
 
 .site-header {
   position: relative;
+  z-index: 6;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  overflow: visible;
   background: #6371af;
   padding: 16px 12px;
   min-height: 128px;
@@ -175,17 +179,63 @@ button {
   display: block;
 }
 
-.header-title {
+.header-title-link {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 2;
+  display: flex;
+  height: 96px;
+  max-width: calc(100% - 560px);
   transform: translate(-50%, -50%);
+}
+
+.header-title {
   height: 96px;
   width: auto;
-  max-width: calc(100% - 560px);
+  max-width: 100%;
   object-fit: contain;
   image-rendering: pixelated;
   pointer-events: none;
+}
+
+.page-nav {
+  position: relative;
+  z-index: 7;
+  align-self: flex-end;
+  margin-left: 16px;
+  margin-bottom: -18px;
+}
+
+.page-nav-tab {
+  display: block;
+  width: 72px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: #9e9e9e;
+  cursor: pointer;
+}
+
+.page-nav-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  display: none;
+  flex-direction: column;
+  min-width: 168px;
+  background: #9e9e9e;
+}
+
+.page-nav-menu.is-open {
+  display: flex;
+}
+
+.page-nav-menu a {
+  padding: 8px 12px;
+  color: #28402f;
+  font-size: 16px;
+  text-decoration: none;
 }
 
 .lang-switch {
@@ -576,6 +626,59 @@ button {
 .account-session-nick {
   margin: 28px 0 12px;
   font-size: 20px;
+}
+
+.feed-tabs {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  padding: 0 24px;
+}
+
+.feed-tab {
+  flex: 1;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: #9e9e9e;
+  color: #28402f;
+  font: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.feed-tab.is-active {
+  outline: 2px solid #28402f;
+  outline-offset: -2px;
+}
+
+.feed-more {
+  margin: 8px 0 24px;
+  color: #28402f;
+  font-size: 18px;
+  text-decoration: underline;
+}
+
+.account-dialog select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #28402f;
+  background: #eaf4fc;
+  color: #28402f;
+  font: inherit;
+}
+
+.post-when {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+body[data-list-kind] .home-copy,
+body[data-list-kind] .versions-wrap,
+body[data-list-kind] .feed-tabs,
+body[data-list-kind] .feed-more {
+  display: none;
 }
 
 .post-create-btn {

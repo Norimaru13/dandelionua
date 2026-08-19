@@ -7,6 +7,7 @@
   var VISITOR_KEY = "dandelion-visitor";
   var editingId = null;
   var lastPosts = [];
+  var feedKind = "project";
 
   function $(sel) {
     return document.querySelector(sel);
@@ -25,6 +26,49 @@
 
   function isAdmin() {
     return window.DandelionAuth ? window.DandelionAuth.isAdmin() : false;
+  }
+
+  function pageKind() {
+    var kind = document.body.getAttribute("data-list-kind");
+    if (kind === "project" || kind === "publication") return kind;
+    return null;
+  }
+
+  function activeKind() {
+    return pageKind() || feedKind;
+  }
+
+  function postKind(post) {
+    return post && post.kind === "publication" ? "publication" : "project";
+  }
+
+  function formatWhen(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    var locale = (typeof getLang === "function" && getLang() === "ua") ? "uk-UA" : "en-GB";
+    return d.toLocaleString(locale, {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  }
+
+  function filteredPosts(list) {
+    var kind = activeKind();
+    var out = (list || []).filter(function (post) {
+      return postKind(post) === kind;
+    });
+    if (pageKind()) return out;
+    return out.slice(0, 3);
+  }
+
+  function syncFeedMore() {
+    var more = $("[data-feed-more]");
+    if (!more) return;
+    more.href = activeKind() === "publication" ? "publications.html" : "projects.html";
   }
 
   function visitorId() {
@@ -80,10 +124,12 @@
     if (!box) return;
     lastPosts = list || [];
     box.innerHTML = "";
-    if (!lastPosts.length) return;
+    var shown = filteredPosts(lastPosts);
+    syncFeedMore();
+    if (!shown.length) return;
     var lang = typeof getLang === "function" ? getLang() : "en";
     var admin = isAdmin();
-    lastPosts.forEach(function (post) {
+    shown.forEach(function (post) {
       var article = document.createElement("article");
       article.className = "post";
       article.setAttribute("data-post-id", post.id);
@@ -131,6 +177,13 @@
 
       var title = lang === "ua" ? (post.title_ua || post.title_en) : (post.title_en || post.title_ua);
       var body = lang === "ua" ? (post.body_ua || post.body_en) : (post.body_en || post.body_ua);
+      var when = formatWhen(post.created_at);
+      if (when) {
+        var time = document.createElement("p");
+        time.className = "post-when";
+        time.textContent = when;
+        article.appendChild(time);
+      }
       if (title) {
         var h = document.createElement("h2");
         h.className = "post-title";
@@ -227,6 +280,7 @@
     var form = $("[data-post-form]");
     if (!form) return;
     editingId = post.id;
+    form.kind.value = postKind(post);
     form.title_en.value = post.title_en || "";
     form.title_ua.value = post.title_ua || "";
     form.body_en.value = post.body_en || "";
@@ -282,6 +336,7 @@
       setPostError("auth");
       return;
     }
+    var kind = form.kind && form.kind.value === "publication" ? "publication" : "project";
     var titleEn = (form.title_en.value || "").trim();
     var titleUa = (form.title_ua.value || "").trim();
     var bodyEn = (form.body_en.value || "").trim();
@@ -295,24 +350,21 @@
     var photosPromise = files && files.length ? readFiles(files) : Promise.resolve(editingId ? null : []);
     photosPromise
       .then(function (photos) {
-        if (editingId) {
-          return rpc("update_post", {
-            p_token: auth,
-            p_id: editingId,
-            p_title_en: titleEn,
-            p_title_ua: titleUa,
-            p_body_en: bodyEn,
-            p_body_ua: bodyUa,
-            p_photos: photos
-          });
-        }
-        return rpc("create_post", {
+        var payload = {
           p_token: auth,
           p_title_en: titleEn,
           p_title_ua: titleUa,
           p_body_en: bodyEn,
           p_body_ua: bodyUa,
-          p_photos: photos || []
+          p_photos: photos,
+          p_kind: kind
+        };
+        if (editingId) payload.p_id = editingId;
+        var name = editingId ? "update_post" : "create_post";
+        if (!editingId && !payload.p_photos) payload.p_photos = [];
+        return rpc(name, payload).catch(function () {
+          delete payload.p_kind;
+          return rpc(name, payload);
         });
       })
       .then(function (data) {
@@ -335,10 +387,22 @@
     var form = $("[data-post-form]");
     var closeBtn = $("[data-post-close]");
 
+    document.querySelectorAll("[data-feed-tab]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        feedKind = btn.getAttribute("data-feed-tab") === "publication" ? "publication" : "project";
+        document.querySelectorAll("[data-feed-tab]").forEach(function (other) {
+          other.classList.toggle("is-active", other === btn);
+        });
+        if (form && form.kind) form.kind.value = feedKind;
+        renderPosts(lastPosts);
+      });
+    });
+
     if (openBtn) {
       openBtn.addEventListener("click", function () {
         editingId = null;
         if (form) form.reset();
+        if (form && form.kind) form.kind.value = activeKind();
         openPostModal();
       });
     }

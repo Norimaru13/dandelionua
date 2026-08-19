@@ -44,7 +44,12 @@ var translations = {
     post_edit: "edit",
     post_delete: "delete",
     post_delete_confirm: "Delete this publication?",
-    post_photos_keep: "when editing, leave empty to keep current photos"
+    post_photos_keep: "when editing, leave empty to keep current photos",
+    nav_home: "Home",
+    nav_projects: "Projects",
+    nav_publications: "Publications",
+    feed_more: "see more",
+    post_kind: "type"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
@@ -84,7 +89,12 @@ var translations = {
     post_edit: "редагувати",
     post_delete: "видалити",
     post_delete_confirm: "Видалити цю публікацію?",
-    post_photos_keep: "при редагуванні залиш порожнім, щоб зберегти поточні фото"
+    post_photos_keep: "при редагуванні залиш порожнім, щоб зберегти поточні фото",
+    nav_home: "Головна",
+    nav_projects: "Проекти",
+    nav_publications: "Публікації",
+    feed_more: "дивитись більше",
+    post_kind: "тип"
   }
 };
 
