@@ -219,7 +219,7 @@ button {
   margin: 0 20vw;
   padding: 24px;
   background: #67a77a;
-  color: #893500;
+  color: #28402f;
 }
 
 .home-copy {
@@ -259,14 +259,14 @@ button {
   text-align: center;
   vertical-align: middle;
   font-weight: normal;
-  background: #c46002;
+  background: #375942;
   border-right: 1px solid #96a5d5;
   border-bottom: 1px solid #96a5d5;
 }
 
 .versions thead th,
 .versions th[scope="row"] {
-  background: #e29020;
+  background: #77bf8c;
 }
 
 .versions thead th:not(.versions-title) {
