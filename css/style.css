@@ -209,7 +209,7 @@ button {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  border: 2px solid #96a5d5;
+  border: 2px solid #e29020;
   border-radius: 8px;
   overflow: hidden;
   font-size: 18px;
@@ -222,8 +222,8 @@ button {
   vertical-align: middle;
   font-weight: normal;
   background: #8491bd;
-  border-right: 1px solid #96a5d5;
-  border-bottom: 1px solid #96a5d5;
+  border-right: 1px solid #c46002;
+  border-bottom: 1px solid #c46002;
 }
 
 .versions thead th,
@@ -248,6 +248,18 @@ button {
 .versions th[scope="row"] {
   text-align: left;
   white-space: nowrap;
+}
+
+.text-a {
+  color: #eebd3b;
+}
+
+.text-b {
+  color: #e29020;
+}
+
+.text-c {
+  color: #c46002;
 }
 
 .mark {
