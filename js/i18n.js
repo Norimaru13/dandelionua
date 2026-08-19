@@ -39,7 +39,12 @@ var translations = {
     err_empty_post: "enter a title",
     err_forbidden: "only the admin can publish",
     err_photo_big: "photo is too large (max ~500 KB)",
-    err_photo_type: "photo: jpg, png, webp or gif"
+    err_photo_type: "photo: jpg, png, webp or gif",
+    post_more: "more",
+    post_edit: "edit",
+    post_delete: "delete",
+    post_delete_confirm: "Delete this publication?",
+    post_photos_keep: "when editing, leave empty to keep current photos"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
@@ -74,7 +79,12 @@ var translations = {
     err_empty_post: "введи назву",
     err_forbidden: "публікувати може лише адміністратор",
     err_photo_big: "фото завелике (макс. близько 500 КБ)",
-    err_photo_type: "фото: jpg, png, webp або gif"
+    err_photo_type: "фото: jpg, png, webp або gif",
+    post_more: "ще",
+    post_edit: "редагувати",
+    post_delete: "видалити",
+    post_delete_confirm: "Видалити цю публікацію?",
+    post_photos_keep: "при редагуванні залиш порожнім, щоб зберегти поточні фото"
   }
 };
 

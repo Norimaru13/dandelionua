@@ -597,9 +597,97 @@ button {
 }
 
 .post {
+  position: relative;
   padding: 16px;
   background: #578c67;
   color: #28402f;
+}
+
+.post-tools {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+}
+
+.post-dots {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #28402f;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.post:hover .post-dots,
+.post-tools:hover .post-dots,
+.post-tools:focus-within .post-dots {
+  opacity: 1;
+}
+
+.post-menu {
+  display: none;
+  position: absolute;
+  top: 32px;
+  right: 0;
+  min-width: 140px;
+  background: #96a5d5;
+  color: #28402f;
+}
+
+.post-menu.is-open {
+  display: flex;
+  flex-direction: column;
+}
+
+.post-menu-item {
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.post-react {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.post-views,
+.post-react .like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #28402f;
+  font-size: 18px;
+}
+
+.post-views svg,
+.post-react .like-btn svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: #28402f;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.post-react .like-btn {
+  width: auto;
+  height: auto;
+}
+
+.post-react .like-btn.is-liked svg {
+  fill: #ffd700;
+  stroke: #ffd700;
 }
 
 .post-title {

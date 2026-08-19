@@ -4,7 +4,6 @@
  */
 (function () {
   var TOKEN_KEY = "dandelion-session";
-  var PAGE = "home";
   var token = localStorage.getItem(TOKEN_KEY) || "";
   var nick = "";
   var isAdmin = false;
@@ -72,12 +71,10 @@
     var formBox = $("[data-account-form-box]");
     var sessionBox = $("[data-account-session]");
     var sessionNick = $("[data-account-session-nick]");
-    var likeBtn = $("[data-like]");
     if (label) label.textContent = nick ? nick : t("account_enter");
     if (formBox) formBox.hidden = Boolean(nick);
     if (sessionBox) sessionBox.hidden = !nick;
     if (sessionNick) sessionNick.textContent = nick;
-    if (likeBtn) likeBtn.classList.toggle("needs-login", !nick);
     document.querySelectorAll("[data-admin-only]").forEach(function (el) {
       el.hidden = !isAdmin;
     });
@@ -121,7 +118,6 @@
     }
     setSession(data.token, data.nick, data.is_admin);
     closeModal();
-    loadLikes();
   }
 
   function register() {
@@ -155,51 +151,11 @@
     setSession("", "");
     closeModal();
     if (current) rpc("account_logout", { p_token: current }).catch(function () {});
-    loadLikes();
-  }
-
-  function renderLikes(state) {
-    var count = $("[data-like-count]");
-    var btn = $("[data-like]");
-    if (count && state && typeof state.likes === "number") {
-      count.textContent = state.likes;
-    }
-    if (btn) btn.classList.toggle("is-liked", Boolean(state && state.liked));
-  }
-
-  function loadLikes() {
-    rpc("get_likes", { p_page: PAGE, p_token: token || null })
-      .then(function (data) {
-        if (data && data.ok) renderLikes(data);
-      })
-      .catch(function () {});
-  }
-
-  function toggleLike() {
-    if (!token) {
-      openModal();
-      setError("need_login");
-      return;
-    }
-    rpc("toggle_like_account", { p_page: PAGE, p_token: token })
-      .then(function (data) {
-        if (!data || !data.ok) {
-          if (data && data.error === "auth") {
-            setSession("", "");
-            openModal();
-            setError("need_login");
-          }
-          return;
-        }
-        renderLikes(data);
-      })
-      .catch(function () {});
   }
 
   function restore() {
     if (!token) {
       paint();
-      loadLikes();
       return;
     }
     rpc("account_me", { p_token: token })
@@ -209,11 +165,12 @@
           isAdmin = Boolean(data.is_admin);
         } else setSession("", "");
         paint();
-        loadLikes();
+        authListeners.forEach(function (fn) {
+          try { fn(); } catch (e) {}
+        });
       })
       .catch(function () {
         paint();
-        loadLikes();
       });
   }
 
@@ -224,8 +181,6 @@
     var regBtn = $("[data-account-register]");
     var outBtn = $("[data-account-logout]");
     var closeBtn = $("[data-account-close]");
-    var likeBtn = $("[data-like]");
-
     if (toggle) toggle.addEventListener("click", openModal);
     if (closeBtn) closeBtn.addEventListener("click", closeModal);
     if (modal) {
@@ -245,7 +200,6 @@
       });
     }
     if (outBtn) outBtn.addEventListener("click", logout);
-    if (likeBtn) likeBtn.addEventListener("click", toggleLike);
 
     var prev = window.applyI18n;
     if (typeof prev === "function") {
@@ -261,6 +215,7 @@
   window.DandelionAuth = {
     token: function () { return token; },
     isAdmin: function () { return isAdmin; },
+    openLogin: openModal,
     onChange: function (fn) {
       if (typeof fn === "function") authListeners.push(fn);
     }
