@@ -27,9 +27,26 @@ body {
   flex: 1;
   min-height: 0;
   overflow-x: hidden;
-  overflow-y: auto;
+  overflow-y: scroll;
   scrollbar-width: thin;
   scrollbar-color: #c46002 #578c67;
+}
+
+.site-row {
+  display: flex;
+  align-items: stretch;
+  min-height: 100%;
+}
+
+.sidebar {
+  flex: 0 0 20vw;
+  width: 20vw;
+  background: #578c67;
+}
+
+.sidebar-end {
+  flex-basis: calc(20vw - 8px);
+  width: calc(20vw - 8px);
 }
 
 .site-scroll::-webkit-scrollbar {
@@ -215,8 +232,9 @@ button {
   align-items: center;
   justify-content: flex-start;
   gap: 28px;
+  min-width: 0;
   min-height: 100%;
-  margin: 0 20vw;
+  margin: 0;
   padding: 24px;
   background: #67a77a;
   color: #28402f;
@@ -225,15 +243,22 @@ button {
 .home-copy {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 18px;
-  max-width: 28em;
+  width: 100%;
+  max-width: 42em;
 }
 
 .intro {
   margin: 0;
+  max-width: 28em;
   text-align: center;
   font-size: 22px;
   line-height: 1.5;
+}
+
+.intro-wide {
+  max-width: 42em;
 }
 
 .versions-wrap {
@@ -247,7 +272,7 @@ button {
   border-collapse: separate;
   border-spacing: 0;
   border: 2px solid #28402f;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
   font-size: 18px;
   color: #28402f;
@@ -283,7 +308,7 @@ button {
 
 .versions-title {
   padding: 0;
-  text-align: left;
+  text-align: center;
   font-size: 22px;
 }
 
@@ -296,7 +321,7 @@ button {
   color: inherit;
   font: inherit;
   font-size: 22px;
-  text-align: left;
+  text-align: center;
   cursor: pointer;
 }
 
@@ -381,4 +406,14 @@ button {
   visibility: visible;
   pointer-events: auto;
   transform: none;
+}
+
+@media (max-width: 720px) {
+  .sidebar {
+    display: none;
+  }
+
+  .site-scroll {
+    overflow-y: auto;
+  }
 }
