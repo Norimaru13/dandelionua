@@ -182,7 +182,7 @@ button {
   transform: translate(-50%, -50%);
   height: 96px;
   width: auto;
-  max-width: calc(100% - 480px);
+  max-width: calc(100% - 560px);
   object-fit: contain;
   image-rendering: pixelated;
 }
@@ -434,6 +434,144 @@ button {
 
 .site-footer p {
   margin: 0;
+}
+
+.header-tools {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-btn {
+  max-width: 120px;
+  padding: 8px 12px;
+  border: 0;
+  background: #96a5d5;
+  color: #28402f;
+  font-size: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.react {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.like-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.like-btn svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #28402f;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.like-btn.is-liked svg {
+  fill: #ffd700;
+  stroke: #ffd700;
+}
+
+.react-count {
+  font-size: 20px;
+}
+
+.account-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.account-modal[hidden] {
+  display: none !important;
+}
+
+.account-dialog {
+  position: relative;
+  width: min(320px, 90vw);
+  padding: 20px;
+  background: #96a5d5;
+  color: #28402f;
+}
+
+.account-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.account-dialog form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.account-dialog label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 16px;
+}
+
+.account-dialog input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #28402f;
+  background: #eaf4fc;
+  color: #28402f;
+  font: inherit;
+}
+
+.account-error {
+  min-height: 1.2em;
+  margin: 0;
+  font-size: 14px;
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.account-actions button,
+.account-dialog [data-account-logout] {
+  padding: 8px 12px;
+  border: 0;
+  background: #6371af;
+  color: #eaf4fc;
+  font: inherit;
+  cursor: pointer;
+}
+
+.account-session-nick {
+  margin: 28px 0 12px;
+  font-size: 20px;
 }
 
 @media (max-width: 720px) {

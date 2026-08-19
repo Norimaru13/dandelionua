@@ -100,3 +100,5 @@ $$;
 
 grant execute on function record_view(text, text) to anon, authenticated;
 grant execute on function toggle_like(text, text) to anon, authenticated;
+
+-- Профілі і лайки з акаунтом: виконай ще docs/accounts.sql

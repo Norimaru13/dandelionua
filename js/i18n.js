@@ -12,7 +12,22 @@ var translations = {
     versions_title: "Supported versions:",
     col_datapacks: "data packs",
     col_resourcepacks: "resource packs",
-    footer: "site created by Norimaru, based on Dandelion's idea"
+    footer: "site created by Norimaru, based on Dandelion's idea",
+    account_enter: "log in",
+    account_nick: "nick",
+    account_password: "password",
+    account_login: "log in",
+    account_register: "create profile",
+    account_logout: "log out",
+    account_close: "close",
+    err_taken: "this nick is already taken",
+    err_bad_login: "wrong nick or password",
+    err_bad_nick: "nick: 3–20 letters, numbers or _",
+    err_bad_password: "password must be at least 6 characters",
+    err_need_login: "log in to like",
+    err_fail: "could not reach the server",
+    err_auth: "log in to like",
+    err_no_db: "could not reach the server"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
@@ -20,7 +35,22 @@ var translations = {
     versions_title: "Підтримувані версії:",
     col_datapacks: "пакети даних",
     col_resourcepacks: "пакети ресурсів",
-    footer: "сайт створено Норімару, за ідеї Данделіону"
+    footer: "сайт створено Норімару, за ідеї Данделіону",
+    account_enter: "увійти",
+    account_nick: "нік",
+    account_password: "пароль",
+    account_login: "увійти",
+    account_register: "створити профіль",
+    account_logout: "вийти",
+    account_close: "закрити",
+    err_taken: "цей нік уже зайнятий",
+    err_bad_login: "неправильний нік або пароль",
+    err_bad_nick: "нік: 3–20 літер, цифр або _",
+    err_bad_password: "пароль має бути щонайменше 6 символів",
+    err_need_login: "щоб поставити вподобайку, увійди в профіль",
+    err_fail: "не вдалося зв’язатися з сервером",
+    err_auth: "щоб поставити вподобайку, увійди в профіль",
+    err_no_db: "не вдалося зв’язатися з сервером"
   }
 };
 
