@@ -219,6 +219,7 @@ button {
   margin: 0 20vw;
   padding: 24px;
   background: #67a77a;
+  color: #893500;
 }
 
 .home-copy {
@@ -249,6 +250,7 @@ button {
   border-radius: 8px;
   overflow: hidden;
   font-size: 18px;
+  color: #000;
 }
 
 .versions th,
@@ -257,14 +259,14 @@ button {
   text-align: center;
   vertical-align: middle;
   font-weight: normal;
-  background: #e29020;
+  background: #c46002;
   border-right: 1px solid #96a5d5;
   border-bottom: 1px solid #96a5d5;
 }
 
 .versions thead th,
 .versions th[scope="row"] {
-  background: #c46002;
+  background: #e29020;
 }
 
 .versions thead th:not(.versions-title) {
@@ -288,25 +290,6 @@ button {
 .versions th[scope="row"] {
   text-align: left;
   white-space: nowrap;
-}
-
-.color-test {
-  margin: 0;
-  display: flex;
-  gap: 28px;
-  font-size: 22px;
-}
-
-.text-a {
-  color: #eebd3b;
-}
-
-.text-b {
-  color: #e29020;
-}
-
-.text-c {
-  color: #c46002;
 }
 
 .mark {
