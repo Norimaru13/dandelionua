@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dandelion_ua</title>
+  <link rel="icon" href="assets/dandelion_ua_site_logo.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="menu-wrap">
+      <button type="button" class="menu-btn" data-menu-toggle aria-expanded="false">
+        <span class="menu-btn-icon">
+          <img class="icon-off" src="assets/dandelion_button.png" alt="">
+          <img class="icon-hover" src="assets/dandelion_button_hovered.png" alt="">
+          <img class="icon-press" src="assets/dandelion_button_pressed.png" alt="">
+        </span>
+      </button>
+      <aside class="side-menu" data-side-menu>
+        <button type="button" class="side-slot">
+          <img src="assets/icons/discord.svg" alt="">
+        </button>
+        <button type="button" class="side-slot">
+          <img src="assets/icons/telegram.svg" alt="">
+        </button>
+        <button type="button" class="side-slot">
+          <img src="assets/icons/modrinth.svg" alt="">
+        </button>
+        <button type="button" class="side-slot">
+          <img src="assets/icons/reddit.svg" alt="">
+        </button>
+      </aside>
+    </div>
+    <img class="header-title" src="assets/dandelion_ua_header.png" alt="">
+    <div class="lang-switch">
+      <button type="button" class="lang-toggle" data-lang-toggle aria-expanded="false">
+        <img src="assets/language_button.png" alt="">
+      </button>
+      <div class="lang-menu" data-lang-menu>
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+        <button type="button" class="lang-btn" data-lang="ua">UA</button>
+      </div>
+    </div>
+  </header>
+  <div class="header-stripes"></div>
+  <main class="page-body">
+    <p class="intro" data-i18n="intro">I am Dandelion, a Ukrainian modder focused on atmospheric mechanics, small details, and captivating gameplay.</p>
+    <a class="to-post" href="post.html">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-6.7-4.35-9.33-8.5C.5 9.5 1.5 5.5 5 4.2 7.1 3.4 9.4 4 12 6.2 14.6 4 16.9 3.4 19 4.2c3.5 1.3 4.5 5.3 2.33 8.3C18.7 16.65 12 21 12 21z"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5C6 5 2.3 10.2 2 12c.3 1.8 4 7 10 7s9.7-5.2 10-7c-.3-1.8-4-7-10-7zm0 10.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4z"/></svg>
+    </a>
+  </main>
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

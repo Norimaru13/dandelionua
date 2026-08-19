@@ -1,0 +1,308 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #67a77a;
+  font-family: "Tiny5", monospace;
+}
+
+button {
+  font-family: inherit;
+}
+
+::selection {
+  background: #eebd3b;
+  color: #eaf4fc;
+}
+
+::-moz-selection {
+  background: #eebd3b;
+  color: #eaf4fc;
+}
+
+.site-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #6371af;
+  padding: 16px 12px;
+  min-height: 128px;
+}
+
+.menu-wrap {
+  position: relative;
+  z-index: 2;
+  width: 252px;
+  height: 64px;
+  overflow: hidden;
+}
+
+.menu-btn {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.menu-btn-icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+.menu-btn-icon img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.menu-btn .icon-hover,
+.menu-btn .icon-press {
+  display: none;
+}
+
+.menu-btn:hover .icon-off {
+  display: none;
+}
+
+.menu-btn:hover .icon-hover {
+  display: block;
+}
+
+.menu-btn:active .icon-off,
+.menu-btn:active .icon-hover {
+  display: none;
+}
+
+.menu-btn:active .icon-press {
+  display: block;
+}
+
+.header-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 96px;
+  width: auto;
+  max-width: calc(100% - 360px);
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.lang-switch {
+  position: relative;
+  z-index: 3;
+}
+
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lang-toggle img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 88px;
+  padding: 8px;
+  border: 2.5px solid #96a5d5;
+  border-radius: 8px;
+  background: #96a5d5;
+}
+
+.lang-btn {
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #000;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.lang-btn:hover {
+  background: #6371af;
+  color: #fff;
+}
+
+.lang-btn.is-active {
+  background: #0057b8;
+  color: #ffd700;
+}
+
+.header-stripes {
+  height: 13.5px;
+  background: linear-gradient(
+    to bottom,
+    #96a5d5 0 1.5px,
+    #0057b8 1.5px 7.5px,
+    #ffd700 7.5px 13.5px
+  );
+}
+
+.page-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 24px;
+}
+
+.intro {
+  margin: 0;
+  max-width: 28em;
+  text-align: center;
+  font-size: 22px;
+  line-height: 1.5;
+}
+
+.side-menu {
+  position: absolute;
+  left: 64px;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 8px;
+  transform: translate(-100%, -50%);
+  pointer-events: none;
+  transition: transform 0.25s ease;
+}
+
+.side-menu.is-open {
+  transform: translate(0, -50%);
+  pointer-events: auto;
+}
+
+.side-slot {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.side-slot img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.to-post {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.to-post svg {
+  width: 28px;
+  height: 28px;
+  fill: #222;
+}
+
+.react-page {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.react {
+  display: flex;
+  align-items: flex-start;
+  gap: 32px;
+}
+
+.react-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.like-btn,
+.view-icon {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.like-btn {
+  cursor: pointer;
+}
+
+.like-btn svg,
+.view-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: #222;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+
+.like-btn.is-liked svg {
+  fill: #ffd700;
+  stroke: #ffd700;
+}
+
+.react-count {
+  font-size: 20px;
+}
+
+.lang-menu {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s ease;
+}
+
+.lang-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: none;
+}
