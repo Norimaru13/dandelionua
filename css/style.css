@@ -23,11 +23,42 @@ body {
   z-index: 20;
 }
 
-.site-scroll {
+.site-pane {
+  position: relative;
   flex: 1;
   min-height: 0;
+}
+
+.site-scroll {
+  height: 100%;
   overflow-x: hidden;
-  overflow-y: scroll;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.site-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.scroll-rail {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 96px;
+  background: transparent;
+  z-index: 5;
+}
+
+.scroll-thumb {
+  position: absolute;
+  left: 0;
+  width: 96px;
+  background: #28402f;
+  border-radius: 0;
 }
 
 .site-stack {
@@ -46,56 +77,6 @@ body {
   flex: 0 0 20vw;
   width: 20vw;
   background: #578c67;
-}
-
-.sidebar-end {
-  flex-basis: calc(20vw - 96px);
-  width: calc(20vw - 96px);
-}
-
-.site-scroll::-webkit-scrollbar {
-  width: 96px;
-  height: 96px;
-  background: #375942;
-}
-
-.site-scroll::-webkit-scrollbar-track,
-.site-scroll::-webkit-scrollbar-track-piece {
-  background: #375942;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.site-scroll::-webkit-scrollbar-thumb {
-  background: #28402f;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-}
-
-.site-scroll::-webkit-scrollbar-button,
-.site-scroll::-webkit-scrollbar-button:single-button,
-.site-scroll::-webkit-scrollbar-button:vertical:start:decrement,
-.site-scroll::-webkit-scrollbar-button:vertical:end:increment,
-.site-scroll::-webkit-scrollbar-button:vertical:start:increment,
-.site-scroll::-webkit-scrollbar-button:vertical:end:decrement {
-  display: none;
-  width: 0;
-  height: 0;
-  background: transparent;
-  border: 0;
-}
-
-.site-scroll::-webkit-scrollbar-corner {
-  background: #375942;
-}
-
-@supports not selector(::-webkit-scrollbar) {
-  .site-scroll {
-    scrollbar-width: auto;
-    scrollbar-color: #28402f #375942;
-  }
 }
 
 button {
@@ -460,7 +441,4 @@ button {
     display: none;
   }
 
-  .site-scroll {
-    overflow-y: auto;
-  }
 }

@@ -51,4 +51,81 @@ document.addEventListener("DOMContentLoaded", function () {
       versionsToggle.setAttribute("aria-expanded", open ? "true" : "false");
     });
   }
+
+  var scroller = document.querySelector("[data-scroll]");
+  var rail = document.querySelector("[data-scroll-rail]");
+  var thumb = document.querySelector("[data-scroll-thumb]");
+  if (scroller && rail && thumb) {
+    var dragging = false;
+    var dragY = 0;
+    var dragTop = 0;
+
+    function metrics() {
+      var view = scroller.clientHeight;
+      var full = scroller.scrollHeight;
+      var maxScroll = Math.max(full - view, 0);
+      var thumbH = maxScroll === 0 ? 0 : Math.max((view / full) * view, 48);
+      return {
+        view: view,
+        maxScroll: maxScroll,
+        thumbH: thumbH,
+        maxTop: view - thumbH
+      };
+    }
+
+    function syncThumb() {
+      var m = metrics();
+      if (m.maxScroll === 0) {
+        thumb.style.display = "none";
+        return;
+      }
+      thumb.style.display = "block";
+      thumb.style.height = m.thumbH + "px";
+      thumb.style.top = (scroller.scrollTop / m.maxScroll) * m.maxTop + "px";
+    }
+
+    scroller.addEventListener("scroll", syncThumb);
+    window.addEventListener("resize", syncThumb);
+    if (window.ResizeObserver) {
+      new ResizeObserver(syncThumb).observe(scroller);
+      if (scroller.firstElementChild) new ResizeObserver(syncThumb).observe(scroller.firstElementChild);
+    }
+
+    thumb.addEventListener("mousedown", function (e) {
+      e.preventDefault();
+      dragging = true;
+      dragY = e.clientY;
+      dragTop = parseFloat(thumb.style.top || "0");
+    });
+
+    document.addEventListener("mousemove", function (e) {
+      if (!dragging) return;
+      var m = metrics();
+      var next = dragTop + (e.clientY - dragY);
+      if (next < 0) next = 0;
+      if (next > m.maxTop) next = m.maxTop;
+      scroller.scrollTop = m.maxTop === 0 ? 0 : (next / m.maxTop) * m.maxScroll;
+    });
+
+    document.addEventListener("mouseup", function () {
+      dragging = false;
+    });
+
+    rail.addEventListener("mousedown", function (e) {
+      if (e.target === thumb) return;
+      var m = metrics();
+      var y = e.clientY - rail.getBoundingClientRect().top - m.thumbH / 2;
+      if (y < 0) y = 0;
+      if (y > m.maxTop) y = m.maxTop;
+      scroller.scrollTop = m.maxTop === 0 ? 0 : (y / m.maxTop) * m.maxScroll;
+    });
+
+    if (versionsToggle) {
+      versionsToggle.addEventListener("click", function () {
+        window.setTimeout(syncThumb, 280);
+      });
+    }
+
+    syncThumb();
+  }
 });
