@@ -58,17 +58,14 @@
 
 - Чистий HTML + CSS + JavaScript (без важких фреймворків)
 - Усе зберігається в папці проєкту
-- Лічильники переглядів / вподобайок: **Supabase** (спільні цифри). Запасний варіант — localStorage у цьому браузері.
-- SQL для лічильників уже є: `docs/supabase.sql` (таблиці + RPC). Для постів, акаунтів і коментарів окремо ще не треба.
-- «Одна людина» поки визначається id у браузері (localStorage), бо акаунтів ще немає
+- Тестової сторінки з лайками немає. `docs/supabase.sql` і `js/config.js` лишились на потім, якщо знову знадобляться спільні цифри.
 - `server.py` лишився тільки для локальної перевірки. GitHub Pages його не запускає.
 
 ---
 
-## 5. Поточний стан (етап 15)
+## 5. Поточний стан (етап 16)
 
-Supabase підключений: у `js/config.js` стоїть Project URL і publishable ключ. Секретний ключ на сайт не кладемо.
-Текстури і лічильники живі на GitHub Pages.
+Тестову `post.html` прибрано. Кнопки кульбаби і мови мають чотири стани. Іконки меню з’являються тільки коли меню відкрите.
 
 Репозиторій: https://github.com/Norimaru13/dandelionua  
 Сайт: https://norimaru13.github.io/dandelionua/
@@ -77,13 +74,12 @@ Supabase підключений: у `js/config.js` стоїть Project URL і p
 - Хедер `#6371af`, удвічі вищий за етап 04
 - Фон сторінки `#67a77a`
 - Три смужки між хедером і тілом, зверху вниз: `#96a5d5`, `#0057b8`, `#ffd700`
-- Кнопка-кульбаба: `dandelion_button.png` / `dandelion_button_hovered.png` / `dandelion_button_pressed.png`
-- Меню кульбаби: тимчасові іконки Discord, Telegram, Modrinth, Reddit (без посилань)
+- Кнопка-кульбаба: default / hover / press / active (`dandelion_button_active.png`, коли меню відкрите)
+- Меню кульбаби: Discord, Telegram, Modrinth, Reddit, MCreator, CurseForge (без посилань)
+- Іконки меню не видно, поки меню закрите
 - По центру `assets/dandelion_ua_header.png`
-- Посередині тіла текст про автора + кнопка на `post.html`
-- `post.html` — порожня сторінка тільки з сердечком, оком і лічильниками
-- Один перегляд і одна вподобайка на людину (на сторінку з лічильником)
-- Кнопка мови: `assets/language_button.png`
+- Посередині тіла текст про автора
+- Кнопка мови: default / hover / press / active (`language_button_active.png`, коли меню мови відкрите)
 - Іконка вкладки: `assets/dandelion_ua_site_logo.png`
 
 Інструкція і стадії — у папці `docs/`.

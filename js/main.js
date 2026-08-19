@@ -7,7 +7,10 @@ document.addEventListener("DOMContentLoaded", function () {
   function setOpen(el, toggle, open) {
     if (!el) return;
     el.classList.toggle("is-open", open);
-    if (toggle) toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    if (toggle) {
+      toggle.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+    }
   }
 
   if (menuToggle && sideMenu) {

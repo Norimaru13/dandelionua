@@ -43,30 +43,34 @@ button {
 .menu-wrap {
   position: relative;
   z-index: 2;
-  width: 252px;
+  display: flex;
+  align-items: center;
   height: 64px;
-  overflow: hidden;
 }
 
-.menu-btn {
+.menu-btn,
+.lang-toggle {
   position: relative;
   z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 64px;
+  height: 64px;
   padding: 0;
   border: 0;
   background: transparent;
   cursor: pointer;
+  flex-shrink: 0;
 }
 
-.menu-btn-icon {
+.btn-tex {
   position: relative;
   width: 64px;
   height: 64px;
 }
 
-.menu-btn-icon img {
+.btn-tex img {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -75,25 +79,36 @@ button {
   image-rendering: pixelated;
 }
 
-.menu-btn .icon-hover,
-.menu-btn .icon-press {
+.tex-btn .icon-hover,
+.tex-btn .icon-press,
+.tex-btn .icon-active {
   display: none;
 }
 
-.menu-btn:hover .icon-off {
+.tex-btn.is-open .icon-off {
   display: none;
 }
 
-.menu-btn:hover .icon-hover {
+.tex-btn.is-open .icon-active {
   display: block;
 }
 
-.menu-btn:active .icon-off,
-.menu-btn:active .icon-hover {
+.tex-btn:hover .icon-off,
+.tex-btn:hover .icon-active {
   display: none;
 }
 
-.menu-btn:active .icon-press {
+.tex-btn:hover .icon-hover {
+  display: block;
+}
+
+.tex-btn:active .icon-off,
+.tex-btn:active .icon-hover,
+.tex-btn:active .icon-active {
+  display: none;
+}
+
+.tex-btn:active .icon-press {
   display: block;
 }
 
@@ -104,7 +119,7 @@ button {
   transform: translate(-50%, -50%);
   height: 96px;
   width: auto;
-  max-width: calc(100% - 360px);
+  max-width: calc(100% - 480px);
   object-fit: contain;
   image-rendering: pixelated;
 }
@@ -112,25 +127,6 @@ button {
 .lang-switch {
   position: relative;
   z-index: 3;
-}
-
-.lang-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 64px;
-  height: 64px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-}
-
-.lang-toggle img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  image-rendering: pixelated;
 }
 
 .lang-menu {
@@ -195,21 +191,29 @@ button {
   line-height: 1.5;
 }
 
+.side-menu-clip {
+  overflow: hidden;
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
 .side-menu {
-  position: absolute;
-  left: 64px;
-  top: 50%;
   display: flex;
   align-items: center;
   gap: 12px;
   padding-left: 8px;
-  transform: translate(-100%, -50%);
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: transform 0.25s ease;
+  transition: transform 0.25s ease, opacity 0.2s ease, visibility 0.2s ease;
 }
 
 .side-menu.is-open {
-  transform: translate(0, -50%);
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
@@ -226,70 +230,6 @@ button {
   width: 100%;
   height: 100%;
   display: block;
-}
-
-.to-post {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.to-post svg {
-  width: 28px;
-  height: 28px;
-  fill: #222;
-}
-
-.react-page {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.react {
-  display: flex;
-  align-items: flex-start;
-  gap: 32px;
-}
-
-.react-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.like-btn,
-.view-icon {
-  width: 48px;
-  height: 48px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-}
-
-.like-btn {
-  cursor: pointer;
-}
-
-.like-btn svg,
-.view-icon svg {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  stroke: #222;
-  stroke-width: 1.6;
-  stroke-linejoin: round;
-}
-
-.like-btn.is-liked svg {
-  fill: #ffd700;
-  stroke: #ffd700;
-}
-
-.react-count {
-  font-size: 20px;
 }
 
 .lang-menu {
