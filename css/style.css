@@ -246,11 +246,11 @@ button {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  border: 2px solid #96a5d5;
+  border: 2px solid #28402f;
   border-radius: 8px;
   overflow: hidden;
   font-size: 18px;
-  color: #000;
+  color: #28402f;
 }
 
 .versions th,
@@ -260,13 +260,13 @@ button {
   vertical-align: middle;
   font-weight: normal;
   background: #375942;
-  border-right: 1px solid #96a5d5;
-  border-bottom: 1px solid #96a5d5;
+  border-right: 1px solid #28402f;
+  border-bottom: 1px solid #28402f;
 }
 
 .versions thead th,
 .versions th[scope="row"] {
-  background: #77bf8c;
+  background: #578c67;
 }
 
 .versions thead th:not(.versions-title) {
@@ -282,9 +282,31 @@ button {
 }
 
 .versions-title {
+  padding: 0;
   text-align: left;
   font-size: 22px;
-  padding-bottom: 10px;
+}
+
+.versions-title button {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 22px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.versions:not(.is-open) .versions-cols,
+.versions:not(.is-open) tbody {
+  display: none;
+}
+
+.versions:not(.is-open) .versions-title {
+  border-bottom: 0;
 }
 
 .versions th[scope="row"] {

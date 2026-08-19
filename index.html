@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=24">
+  <link rel="stylesheet" href="css/style.css?v=25">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -72,12 +72,16 @@
       <p class="intro" data-i18n="intro2">I create mods, data packs, and resource packs for Minecraft Java Edition, mostly working on mod loaders such as Fabric and NeoForge, occasionally Forge. Do I plan to expand toward Bedrock Edition? I don't see a reason for that yet, but it all depends on the future community and its needs.</p>
     </div>
     <div class="versions-wrap">
-      <table class="versions">
+      <table class="versions" data-versions>
         <thead>
           <tr>
-            <th class="versions-title" colspan="5" data-i18n="versions_title">Supported versions:</th>
+            <th class="versions-title" colspan="5">
+              <button type="button" data-versions-toggle aria-expanded="false">
+                <span data-i18n="versions_title">Supported versions:</span>
+              </button>
+            </th>
           </tr>
-          <tr>
+          <tr class="versions-cols">
             <th></th>
             <th>fabric</th>
             <th>neoforge</th>
@@ -168,7 +172,7 @@
     </div>
   </main>
   </div>
-  <script src="js/i18n.js?v=24"></script>
-  <script src="js/main.js?v=24"></script>
+  <script src="js/i18n.js?v=25"></script>
+  <script src="js/main.js?v=25"></script>
 </body>
 </html>

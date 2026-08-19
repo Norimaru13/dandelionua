@@ -34,4 +34,14 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+
+  var versions = document.querySelector("[data-versions]");
+  var versionsToggle = document.querySelector("[data-versions-toggle]");
+  if (versions && versionsToggle) {
+    versionsToggle.addEventListener("click", function () {
+      var open = !versions.classList.contains("is-open");
+      versions.classList.toggle("is-open", open);
+      versionsToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  }
 });
