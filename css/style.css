@@ -200,17 +200,16 @@ button {
 }
 
 .page-nav {
-  position: relative;
-  z-index: 7;
-  align-self: flex-end;
-  margin-left: 16px;
-  margin-bottom: -18px;
+  position: absolute;
+  left: 108px;
+  bottom: -18px;
+  z-index: 8;
 }
 
 .page-nav-tab {
   display: block;
   width: 72px;
-  height: 26px;
+  height: 32px;
   padding: 0;
   border: 0;
   background: #9e9e9e;

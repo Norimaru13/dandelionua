@@ -234,7 +234,7 @@
       .then(function (data) {
         if (data && data.ok) {
           renderPosts(data.posts || []);
-          recordViews(data.posts || []);
+          recordViews(filteredPosts(lastPosts));
         }
       })
       .catch(function () {});
