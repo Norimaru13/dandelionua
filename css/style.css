@@ -959,6 +959,7 @@ body[data-list-kind] .feed-more {
   aspect-ratio: 16 / 9;
   max-height: 100%;
   overflow: hidden;
+  padding-top: 42px;
   background: #96a5d5;
   color: #28402f;
   transform: translateY(16px) scale(0.98);
@@ -975,9 +976,10 @@ body[data-list-kind] .feed-more {
   flex: 1;
   min-height: 0;
   gap: 10px;
-  padding: 36px 28px 18px;
+  padding: 8px 28px 18px;
   overflow-x: hidden;
   overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .post-form label {
@@ -1189,6 +1191,7 @@ body[data-list-kind] .feed-more {
   flex: 1;
   min-height: 0;
   overflow: auto;
+  scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
   gap: 8px;
