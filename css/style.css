@@ -3,8 +3,8 @@
 }
 
 :root {
-  --site-cursor: url("../assets/icons/cursor.png?v=47") 0 0, auto;
-  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=47") 0 0, auto;
+  --site-cursor: url("../assets/icons/cursor.png?v=48") 0 0, auto;
+  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=48") 0 0, auto;
 }
 
 html,
@@ -63,7 +63,7 @@ body {
   right: 0;
   bottom: 0;
   width: 24px;
-  background: #7d8bb8;
+  background: #375942;
   z-index: 5;
 }
 
@@ -73,17 +73,6 @@ body {
   width: 24px;
   background: #28402f;
   border-radius: 0;
-}
-
-.scroll-end-cap {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: 24px;
-  height: 0;
-  background: #578c67;
-  z-index: 6;
-  pointer-events: none;
 }
 
 .site-stack {
@@ -538,17 +527,6 @@ button {
   flex-shrink: 0;
 }
 
-.site-end::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 24px;
-  background: #578c67;
-  pointer-events: none;
-}
-
 .footer-stripe {
   height: 1.5px;
   background: #96a5d5;
@@ -559,7 +537,7 @@ button {
   background: #6371af;
   color: #28402f;
   text-align: center;
-  padding: 16px 36px 16px 12px;
+  padding: 16px 12px;
   font-size: 18px;
 }
 
@@ -1059,28 +1037,36 @@ body[data-list-kind] .feed-more {
   font-size: 18px;
   line-height: 1.45;
   cursor: text;
+}
+
+.post-form,
+.post-project {
   scrollbar-width: auto;
   scrollbar-color: #6371af transparent;
 }
 
-.post-editor::-webkit-scrollbar {
+.post-form::-webkit-scrollbar,
+.post-project::-webkit-scrollbar {
   width: 16px;
 }
 
-.post-editor::-webkit-scrollbar-track {
+.post-form::-webkit-scrollbar-track,
+.post-project::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.post-editor::-webkit-scrollbar-thumb {
+.post-form::-webkit-scrollbar-thumb,
+.post-project::-webkit-scrollbar-thumb {
   background: #6371af;
   border-radius: 0;
 }
 
 .post-controls {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 16px;
   flex-shrink: 0;
+  margin-top: 6px;
 }
 
 .post-toolbar {
@@ -1090,7 +1076,6 @@ body[data-list-kind] .feed-more {
   gap: 6px;
   flex: 1;
   min-width: 0;
-  padding-bottom: 18px;
 }
 
 .post-tool {

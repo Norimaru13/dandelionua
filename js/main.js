@@ -102,7 +102,6 @@ document.addEventListener("DOMContentLoaded", function () {
   var rail = document.querySelector("[data-scroll-rail]");
   var thumb = document.querySelector("[data-scroll-thumb]");
   var scrollEnd = document.querySelector("[data-scroll-end]");
-  var scrollCap = document.querySelector("[data-scroll-cap]");
   var pane = document.querySelector(".site-pane");
   if (scroller && rail && thumb) {
     var dragging = false;
@@ -137,7 +136,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function syncThumb() {
       var overlap = endOverlap();
       rail.style.bottom = overlap + "px";
-      if (scrollCap) scrollCap.style.height = overlap + "px";
       var m = metrics();
       if (m.maxScroll === 0) {
         thumb.style.display = "none";
