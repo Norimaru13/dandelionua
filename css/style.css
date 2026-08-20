@@ -646,7 +646,8 @@ button {
   image-rendering: pixelated;
 }
 
-.account-close .close-hover {
+.account-close .close-hover,
+.account-close .close-press {
   display: none;
 }
 
@@ -655,6 +656,15 @@ button {
 }
 
 .account-close:hover .close-hover {
+  display: block;
+}
+
+.account-close:active .close-off,
+.account-close:active .close-hover {
+  display: none;
+}
+
+.account-close:active .close-press {
   display: block;
 }
 
