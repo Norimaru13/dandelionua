@@ -131,7 +131,12 @@
   function syncFormKind() {
     var form = $("[data-post-form]");
     if (!form) return;
-    form.setAttribute("data-form-kind", formKind());
+    var kind = formKind();
+    form.setAttribute("data-form-kind", kind);
+    if (form.kind) form.kind.value = kind;
+    document.querySelectorAll("[data-post-kind]").forEach(function (btn) {
+      btn.classList.toggle("is-active", btn.getAttribute("data-post-kind") === kind);
+    });
   }
 
   function fillVersionBoxes() {
@@ -320,6 +325,28 @@
       document.execCommand(cmd, false, val || null);
     } catch (e) {}
     saveSel();
+    syncFmtButtons();
+  }
+
+  function applyColorLive() {
+    if (!savedRange) return;
+    var sel = window.getSelection();
+    try {
+      sel.removeAllRanges();
+      sel.addRange(savedRange.cloneRange());
+      document.execCommand("styleWithCSS", false, true);
+      document.execCommand("foreColor", false, rgbColor());
+      if (sel.rangeCount) savedRange = sel.getRangeAt(0).cloneRange();
+    } catch (e) {}
+  }
+
+  function syncFmtButtons() {
+    document.querySelectorAll("[data-fmt]").forEach(function (btn) {
+      var cmd = btn.getAttribute("data-fmt");
+      var on = false;
+      try { on = document.queryCommandState(cmd); } catch (e) {}
+      btn.classList.toggle("is-on", on);
+    });
   }
 
   function sanitizeColor(value) {
@@ -916,12 +943,13 @@
     var g = $('[data-rgb="g"]');
     var b = $('[data-rgb="b"]');
     if (preview) preview.style.background = rgbColor();
-    if (hex && document.activeElement !== hex) {
-      hex.value = "#" + toHex(c.r) + toHex(c.g) + toHex(c.b);
-    }
-    if (r) r.style.setProperty("--rgb-track", "linear-gradient(to right, rgb(0," + c.g + "," + c.b + "), rgb(255," + c.g + "," + c.b + "))");
-    if (g) g.style.setProperty("--rgb-track", "linear-gradient(to right, rgb(" + c.r + ",0," + c.b + "), rgb(" + c.r + ",255," + c.b + "))");
-    if (b) b.style.setProperty("--rgb-track", "linear-gradient(to right, rgb(" + c.r + "," + c.g + ",0), rgb(" + c.r + "," + c.g + ",255))");
+    var hexStr = "#" + toHex(c.r) + toHex(c.g) + toHex(c.b);
+    if (hex && document.activeElement !== hex) hex.value = hexStr;
+    var pick = $("[data-rgb-pick]");
+    if (pick && document.activeElement !== pick) pick.value = hexStr;
+    if (r) r.style.setProperty("--rgb-track", "linear-gradient(to top, rgb(0," + c.g + "," + c.b + "), rgb(255," + c.g + "," + c.b + "))");
+    if (g) g.style.setProperty("--rgb-track", "linear-gradient(to top, rgb(" + c.r + ",0," + c.b + "), rgb(" + c.r + ",255," + c.b + "))");
+    if (b) b.style.setProperty("--rgb-track", "linear-gradient(to top, rgb(" + c.r + "," + c.g + ",0), rgb(" + c.r + "," + c.g + ",255))");
   }
 
   function insertPhoto(file) {
@@ -1064,7 +1092,9 @@
 
     document.querySelectorAll(".post-toolbar, .post-lead-bar").forEach(function (toolbar) {
       toolbar.addEventListener("mousedown", function (e) {
-        if (e.target.closest("button")) e.preventDefault();
+        if (!e.target.closest("button")) return;
+        e.preventDefault();
+        if (window.dandelionClick) window.dandelionClick();
       });
     });
 
@@ -1073,6 +1103,7 @@
         applyFmt(btn.getAttribute("data-fmt"));
       });
     });
+    document.addEventListener("selectionchange", syncFmtButtons);
 
     document.querySelectorAll("[data-color]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -1081,19 +1112,28 @@
       });
     });
 
-    if (form && form.kind) {
-      form.kind.addEventListener("change", syncFormKind);
-    }
-
-    document.querySelectorAll("[data-rgb]").forEach(function (input) {
-      input.addEventListener("mousedown", saveSel);
-      input.addEventListener("input", function () {
-        var active = document.activeElement;
-        syncRgbPreview();
-        applyFmt("foreColor", rgbColor());
-        if (active && active.focus) active.focus();
+    document.querySelectorAll("[data-post-kind]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        if (form && form.kind) form.kind.value = btn.getAttribute("data-post-kind");
+        syncFormKind();
       });
     });
+
+    document.querySelectorAll("[data-rgb]").forEach(function (input) {
+      input.addEventListener("pointerdown", saveSel);
+      input.addEventListener("input", function () {
+        syncRgbPreview();
+        applyColorLive();
+      });
+    });
+    var pick = $("[data-rgb-pick]");
+    if (pick) {
+      pick.addEventListener("pointerdown", saveSel);
+      pick.addEventListener("input", function () {
+        setWriteColor(pick.value);
+        applyColorLive();
+      });
+    }
     var rgbApply = $("[data-rgb-apply]");
     if (rgbApply) {
       rgbApply.addEventListener("click", function () {
@@ -1112,10 +1152,8 @@
         if (r) r.value = parsed.r;
         if (g) g.value = parsed.g;
         if (b) b.value = parsed.b;
-        var active = document.activeElement;
         syncRgbPreview();
-        applyFmt("foreColor", rgbColor());
-        if (active && active.focus) active.focus();
+        applyColorLive();
       });
     }
     syncRgbPreview();

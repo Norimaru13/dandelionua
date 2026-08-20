@@ -1,9 +1,17 @@
 document.addEventListener("DOMContentLoaded", function () {
   var clickSrc = "assets/minecraft_click.mp3";
+  var clickAudio = new Audio(clickSrc);
+  clickAudio.preload = "auto";
+  window.dandelionClick = function () {
+    try {
+      var a = clickAudio.cloneNode();
+      a.play().catch(function () {});
+    } catch (err) {}
+  };
   document.addEventListener("click", function (e) {
-    if (!e.target.closest("button, .side-slot, .page-nav-menu a")) return;
-    var audio = new Audio(clickSrc);
-    audio.play().catch(function () {});
+    if (e.target.closest(".post-toolbar button, .post-lead-bar button")) return;
+    if (!e.target.closest("button, .side-slot, .page-nav-menu a, .proj-chip, .post-swatch, .rgb-pick")) return;
+    window.dandelionClick();
   }, true);
 
   var menuToggle = document.querySelector("[data-menu-toggle]");
