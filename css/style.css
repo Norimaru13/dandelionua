@@ -3,8 +3,8 @@
 }
 
 :root {
-  --site-cursor: url("../assets/icons/cursor.png?v=49") 0 0, auto;
-  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=49") 0 0, auto;
+  --site-cursor: url("../assets/icons/cursor.png?v=50") 0 0, auto;
+  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=50") 0 0, auto;
 }
 
 html,
@@ -628,12 +628,34 @@ button {
   position: absolute;
   top: 8px;
   right: 8px;
-  padding: 4px 8px;
+  z-index: 2;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border: 0;
   background: transparent;
-  color: inherit;
-  font: inherit;
   cursor: var(--site-cursor-hover);
+}
+
+.account-close img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.account-close .close-hover {
+  display: none;
+}
+
+.account-close:hover .close-off {
+  display: none;
+}
+
+.account-close:hover .close-hover {
+  display: block;
 }
 
 .account-dialog form {
@@ -954,6 +976,8 @@ body[data-list-kind] .feed-more {
   min-height: 0;
   gap: 10px;
   padding: 36px 28px 18px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .post-form label {
@@ -1016,7 +1040,7 @@ body[data-list-kind] .feed-more {
 .post-pane {
   display: none;
   flex-direction: column;
-  flex: 1;
+  flex: 0 0 auto;
   min-height: 0;
   gap: 8px;
 }
@@ -1026,9 +1050,11 @@ body[data-list-kind] .feed-more {
 }
 
 .post-editor {
-  flex: 1;
-  min-height: 140px;
+  flex: 0 0 auto;
+  min-height: 120px;
+  height: 200px;
   overflow: auto;
+  resize: vertical;
   padding: 10px 12px;
   border: 2px solid #28402f;
   background: #eaf4fc;
@@ -1037,6 +1063,24 @@ body[data-list-kind] .feed-more {
   font-size: 18px;
   line-height: 1.45;
   cursor: text;
+  scrollbar-width: auto;
+  scrollbar-color: #6371af transparent;
+}
+
+.post-editor::-webkit-scrollbar,
+.post-lead-edit::-webkit-scrollbar {
+  width: 16px;
+}
+
+.post-editor::-webkit-scrollbar-track,
+.post-lead-edit::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.post-editor::-webkit-scrollbar-thumb,
+.post-lead-edit::-webkit-scrollbar-thumb {
+  background: #6371af;
+  border-radius: 0;
 }
 
 .post-form,
@@ -1066,7 +1110,9 @@ body[data-list-kind] .feed-more {
   align-items: flex-start;
   gap: 8px;
   flex-shrink: 0;
-  margin-top: 10px;
+  margin-top: 12px;
+  position: relative;
+  z-index: 1;
 }
 
 .post-toolbar {
@@ -1196,14 +1242,17 @@ body[data-list-kind] .feed-more {
 
 .post-lead-edit {
   min-height: 44px;
-  max-height: 88px;
+  height: 56px;
   overflow: auto;
+  resize: vertical;
   padding: 8px;
   border: 2px solid #28402f;
   background: #eaf4fc;
   color: #28402f;
   font: inherit;
   cursor: text;
+  scrollbar-width: auto;
+  scrollbar-color: #6371af transparent;
 }
 
 .post-lead-bar {
@@ -1286,8 +1335,9 @@ body[data-list-kind] .feed-more {
   display: flex;
   align-items: flex-end;
   gap: 14px;
-  height: 128px;
-  padding-bottom: 8px;
+  height: 148px;
+  padding-bottom: 16px;
+  overflow: hidden;
 }
 
 .rgb-current {
@@ -1299,12 +1349,12 @@ body[data-list-kind] .feed-more {
 .rgb-col {
   position: relative;
   width: 28px;
-  height: 120px;
+  height: 132px;
 }
 
 .rgb-col span {
   position: absolute;
-  bottom: -8px;
+  bottom: 0;
   left: 0;
   width: 100%;
   text-align: center;
@@ -1313,7 +1363,7 @@ body[data-list-kind] .feed-more {
 
 .rgb-slider {
   position: absolute;
-  top: 44px;
+  top: 50px;
   left: -42px;
   width: 112px;
   height: 18px;

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=49">
+  <link rel="stylesheet" href="css/style.css?v=50">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -53,7 +53,7 @@
         <div class="page-nav-menu" data-page-nav-menu>
           <a href="index.html" data-i18n="nav_home">Home</a>
           <a href="projects.html" data-i18n="nav_projects">Projects</a>
-          <a href="publications.html" data-i18n="nav_publications">Publications</a>
+          <a href="publications.html" data-i18n="nav_publications">Posts</a>
         </div>
       </div>
     </div>
@@ -211,7 +211,7 @@
     </div>
     <div class="feed-tabs" data-feed-tabs>
       <button type="button" class="feed-tab is-active" data-feed-tab="project" data-i18n="nav_projects">Projects</button>
-      <button type="button" class="feed-tab" data-feed-tab="publication" data-i18n="nav_publications">Publications</button>
+      <button type="button" class="feed-tab" data-feed-tab="publication" data-i18n="nav_publications">Posts</button>
     </div>
     <button type="button" class="post-create-btn" data-post-create data-admin-only hidden data-i18n="post_create">Create publication</button>
     <section class="posts" data-posts></section>
@@ -233,7 +233,10 @@
   </div>
   <div class="account-modal" data-account-modal hidden>
     <div class="account-dialog">
-      <button type="button" class="account-close" data-account-close data-i18n="account_close">close</button>
+      <button type="button" class="account-close" data-account-close data-i18n-title="account_close">
+        <img class="close-off" src="assets/icons/cross_button.png" alt="">
+        <img class="close-hover" src="assets/icons/cross_button_hovered.png" alt="">
+      </button>
       <div data-account-form-box>
         <form data-account-form>
           <label>
@@ -259,7 +262,10 @@
   </div>
   <div class="post-modal" data-post-modal hidden>
     <div class="post-dialog">
-      <button type="button" class="account-close" data-post-close data-i18n="account_close">close</button>
+      <button type="button" class="account-close" data-post-close data-i18n-title="account_close">
+        <img class="close-off" src="assets/icons/cross_button.png" alt="">
+        <img class="close-hover" src="assets/icons/cross_button_hovered.png" alt="">
+      </button>
       <form class="post-form" data-post-form data-form-kind="project" data-form-lang="en">
         <label class="post-kind-row">
           <span data-i18n="post_kind">type</span>
@@ -387,9 +393,9 @@
     </div>
   </div>
   <script src="js/config.js"></script>
-  <script src="js/i18n.js?v=49"></script>
-  <script src="js/account.js?v=49"></script>
-  <script src="js/posts.js?v=49"></script>
-  <script src="js/main.js?v=49"></script>
+  <script src="js/i18n.js?v=50"></script>
+  <script src="js/account.js?v=50"></script>
+  <script src="js/posts.js?v=50"></script>
+  <script src="js/main.js?v=50"></script>
 </body>
 </html>
