@@ -12,6 +12,8 @@
   var confirmFn = null;
   var closeTimer = 0;
   var previewPhoto = null;
+  var lastEdit = null;
+  var confirmTimer = 0;
   var PROJECT_VERSIONS = ["26.2", "26.1.2", "26.1.1", "26.1", "1.21.8", "1.21.1", "1.21", "1.20.1", "1.20", "1.19.4", "1.18.2"];
   var META_TYPES = ["mod", "datapack", "resourcepack"];
   var META_STATES = ["release", "open_beta", "closed_beta"];
@@ -102,9 +104,10 @@
   }
 
   function activeEditor() {
+    if (lastEdit && document.contains(lastEdit)) return lastEdit;
     var pane = $(".post-pane.is-on");
     if (!pane) return editor("en");
-    return pane.querySelector("[data-editor]");
+    return pane.querySelector("[data-editor], [data-lead]") || editor("en");
   }
 
   function setPostLang(lang) {
@@ -136,6 +139,7 @@
     if (!box || box.children.length) return;
     PROJECT_VERSIONS.forEach(function (ver) {
       var label = document.createElement("label");
+      label.className = "proj-chip";
       var input = document.createElement("input");
       input.type = "checkbox";
       input.name = "proj_version";
@@ -282,8 +286,11 @@
     var sel = window.getSelection();
     if (!sel || !sel.rangeCount) return;
     var node = sel.anchorNode;
-    var box = activeEditor();
-    if (!box || !node || !box.contains(node.nodeType === 1 ? node : node.parentNode)) return;
+    var el = node && (node.nodeType === 1 ? node : node.parentNode);
+    if (!el || !el.closest) return;
+    var box = el.closest("[data-editor], [data-lead]");
+    if (!box) return;
+    lastEdit = box;
     savedRange = sel.getRangeAt(0);
   }
 
@@ -378,6 +385,39 @@
 
     clean(root);
     return root.innerHTML;
+  }
+
+  function sanitizeLead(html) {
+    var wrap = document.createElement("div");
+    wrap.innerHTML = sanitizeHtml(html || "");
+    wrap.querySelectorAll("img").forEach(function (img) {
+      if (img.parentNode) img.parentNode.removeChild(img);
+    });
+    wrap.querySelectorAll("[style]").forEach(function (el) {
+      el.removeAttribute("style");
+    });
+    return wrap.innerHTML;
+  }
+
+  function fillLeads(post) {
+    ["en", "ua"].forEach(function (lang) {
+      var el = $('[data-lead="' + lang + '"]');
+      if (!el) return;
+      var raw = post ? ((lang === "ua" ? post.lead_ua : post.lead_en) || "") : "";
+      if (looksHtml(raw)) el.innerHTML = sanitizeLead(raw);
+      else el.innerHTML = escapeText(raw);
+    });
+  }
+
+  function readLead(lang) {
+    var el = $('[data-lead="' + lang + '"]');
+    if (!el) return "";
+    if (formKind() === "project") return (el.textContent || "").replace(/\s+/g, " ").trim();
+    var html = sanitizeLead(el.innerHTML);
+    var tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    if (!(tmp.textContent || "").trim()) return "";
+    return html;
   }
 
   function looksHtml(text) {
@@ -504,6 +544,8 @@
     var form = $("[data-post-form]");
     if (form) form.reset();
     fillEditors(null);
+    fillLeads(null);
+    lastEdit = null;
     writeMeta({});
     setPreview(null);
     setPostError("");
@@ -548,14 +590,23 @@
     }
     text.textContent = message;
     confirmFn = onYes;
+    window.clearTimeout(confirmTimer);
     box.hidden = false;
     if (typeof window.applyI18n === "function") applyI18n();
     text.textContent = message;
+    window.requestAnimationFrame(function () {
+      box.classList.add("is-open");
+    });
   }
 
   function hideConfirm() {
     var box = $("[data-confirm-modal]");
-    if (box) box.hidden = true;
+    if (box) {
+      box.classList.remove("is-open");
+      confirmTimer = window.setTimeout(function () {
+        box.hidden = true;
+      }, 280);
+    }
     confirmFn = null;
   }
 
@@ -668,8 +719,13 @@
       }
       if (lead) {
         var leadEl = document.createElement("p");
-        leadEl.className = "post-lead";
-        leadEl.textContent = lead;
+        if (looksHtml(lead)) {
+          leadEl.className = "post-lead post-lead-html";
+          leadEl.innerHTML = sanitizeLead(lead);
+        } else {
+          leadEl.className = "post-lead";
+          leadEl.textContent = lead;
+        }
         host.appendChild(leadEl);
       }
       if (isProject && post.meta) {
@@ -801,8 +857,7 @@
     form.kind.value = postKind(post);
     form.title_en.value = post.title_en || "";
     form.title_ua.value = post.title_ua || "";
-    if (form.lead_en) form.lead_en.value = post.lead_en || "";
-    if (form.lead_ua) form.lead_ua.value = post.lead_ua || "";
+    fillLeads(post);
     fillEditors(post);
     writeMeta(typeof post.meta === "string" ? (function () { try { return JSON.parse(post.meta); } catch (e) { return {}; } })() : (post.meta || {}));
     setPreview(post.preview_data && post.preview_mime
@@ -828,6 +883,18 @@
     var g = $('[data-rgb="g"]');
     var b = $('[data-rgb="b"]');
     return "rgb(" + (r ? r.value : 40) + ", " + (g ? g.value : 64) + ", " + (b ? b.value : 47) + ")";
+  }
+
+  function setWriteColor(hex) {
+    var parsed = parseHex(hex);
+    if (!parsed) return;
+    var r = $('[data-rgb="r"]');
+    var g = $('[data-rgb="g"]');
+    var b = $('[data-rgb="b"]');
+    if (r) r.value = parsed.r;
+    if (g) g.value = parsed.g;
+    if (b) b.value = parsed.b;
+    syncRgbPreview();
   }
 
   function rgbParts() {
@@ -903,8 +970,8 @@
     var kind = form.kind && form.kind.value === "publication" ? "publication" : "project";
     var titleEn = (form.title_en.value || "").trim();
     var titleUa = kind === "project" ? titleEn : (form.title_ua ? (form.title_ua.value || "").trim() : "");
-    var leadEn = form.lead_en ? (form.lead_en.value || "").trim() : "";
-    var leadUa = form.lead_ua ? (form.lead_ua.value || "").trim() : "";
+    var leadEn = readLead("en");
+    var leadUa = readLead("ua");
     if (!titleEn && !titleUa) {
       setPostError("empty_post");
       return;
@@ -986,18 +1053,20 @@
       });
     });
 
-    document.querySelectorAll("[data-editor]").forEach(function (box) {
+    document.querySelectorAll("[data-editor], [data-lead]").forEach(function (box) {
       box.addEventListener("keyup", saveSel);
       box.addEventListener("mouseup", saveSel);
-      box.addEventListener("focus", saveSel);
+      box.addEventListener("focus", function () {
+        lastEdit = box;
+        saveSel();
+      });
     });
 
-    var toolbar = $(".post-toolbar");
-    if (toolbar) {
+    document.querySelectorAll(".post-toolbar, .post-lead-bar").forEach(function (toolbar) {
       toolbar.addEventListener("mousedown", function (e) {
         if (e.target.closest("button")) e.preventDefault();
       });
-    }
+    });
 
     document.querySelectorAll("[data-fmt]").forEach(function (btn) {
       btn.addEventListener("click", function () {
@@ -1007,7 +1076,8 @@
 
     document.querySelectorAll("[data-color]").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        applyFmt("foreColor", btn.getAttribute("data-color"));
+        setWriteColor(btn.getAttribute("data-color"));
+        applyFmt("foreColor", rgbColor());
       });
     });
 
