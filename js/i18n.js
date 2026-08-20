@@ -65,7 +65,23 @@ var translations = {
     social_mcreator: "MCreator",
     social_telegram: "Telegram",
     social_discord: "Discord",
-    social_reddit: "Reddit"
+    social_reddit: "Reddit",
+    proj_types: "project type",
+    proj_type_mod: "mod",
+    proj_type_datapack: "data pack",
+    proj_type_resourcepack: "resource pack",
+    proj_state: "project state",
+    proj_state_release: "release",
+    proj_state_open_beta: "open beta",
+    proj_state_closed_beta: "closed beta",
+    proj_status: "project status",
+    proj_status_ready: "ready",
+    proj_status_wip: "in development",
+    proj_status_paused: "development paused",
+    proj_status_planned: "planned",
+    proj_versions: "versions",
+    proj_platforms: "platforms",
+    proj_preview: "preview photo"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
@@ -126,7 +142,23 @@ var translations = {
     social_mcreator: "MCreator",
     social_telegram: "Телеграм",
     social_discord: "Діскорд",
-    social_reddit: "Реддіт"
+    social_reddit: "Реддіт",
+    proj_types: "тип проєкту",
+    proj_type_mod: "мод",
+    proj_type_datapack: "пакет даних",
+    proj_type_resourcepack: "пакет ресурсів",
+    proj_state: "стан проєкту",
+    proj_state_release: "реліз",
+    proj_state_open_beta: "відкритий бета-тест",
+    proj_state_closed_beta: "закритий бета-тест",
+    proj_status: "статус проєкту",
+    proj_status_ready: "готовий",
+    proj_status_wip: "в розробці",
+    proj_status_paused: "розробку призупинено",
+    proj_status_planned: "запланований",
+    proj_versions: "версії",
+    proj_platforms: "платформи",
+    proj_preview: "прев'ю"
   }
 };
 

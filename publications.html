@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=43">
+  <link rel="stylesheet" href="css/style.css?v=44">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -257,7 +257,7 @@
   <div class="post-modal" data-post-modal hidden>
     <div class="post-dialog">
       <button type="button" class="account-close" data-post-close data-i18n="account_close">close</button>
-      <form class="post-form" data-post-form>
+      <form class="post-form" data-post-form data-form-kind="project" data-form-lang="en">
         <label class="post-kind-row">
           <span data-i18n="post_kind">type</span>
           <select name="kind">
@@ -265,23 +265,23 @@
             <option value="publication" data-i18n="nav_publications">Publications</option>
           </select>
         </label>
+        <label data-title-en>
+          <span data-i18n="post_title">title</span>
+          <input name="title_en" maxlength="120">
+        </label>
         <div class="post-lang-tabs">
           <button type="button" class="post-lang-tab is-active" data-post-lang="en">EN</button>
           <button type="button" class="post-lang-tab" data-post-lang="ua">UA</button>
         </div>
         <div class="post-pane is-on" data-post-pane="en">
           <label>
-            <span data-i18n="post_title">title</span>
-            <input name="title_en" maxlength="120">
-          </label>
-          <label>
             <span data-i18n="post_lead">short description</span>
             <input name="lead_en" maxlength="240">
           </label>
-          <div class="post-editor" data-editor="en" contenteditable="true"></div>
+          <div class="post-editor" data-editor="en" data-pub-only contenteditable="true"></div>
         </div>
         <div class="post-pane" data-post-pane="ua">
-          <label>
+          <label data-pub-only>
             <span data-i18n="post_title">title</span>
             <input name="title_ua" maxlength="120">
           </label>
@@ -289,9 +289,43 @@
             <span data-i18n="post_lead">short description</span>
             <input name="lead_ua" maxlength="240">
           </label>
-          <div class="post-editor" data-editor="ua" contenteditable="true"></div>
+          <div class="post-editor" data-editor="ua" data-pub-only contenteditable="true"></div>
         </div>
-        <div class="post-toolbar">
+        <div class="post-project" data-project-only>
+          <p class="proj-label" data-i18n="proj_types">project type</p>
+          <div class="proj-opts">
+            <label><input type="checkbox" name="proj_type" value="mod"><span data-i18n="proj_type_mod">mod</span></label>
+            <label><input type="checkbox" name="proj_type" value="datapack"><span data-i18n="proj_type_datapack">data pack</span></label>
+            <label><input type="checkbox" name="proj_type" value="resourcepack"><span data-i18n="proj_type_resourcepack">resource pack</span></label>
+          </div>
+          <p class="proj-label" data-i18n="proj_state">project state</p>
+          <div class="proj-opts">
+            <label><input type="radio" name="proj_state" value="release"><span data-i18n="proj_state_release">release</span></label>
+            <label><input type="radio" name="proj_state" value="open_beta"><span data-i18n="proj_state_open_beta">open beta</span></label>
+            <label><input type="radio" name="proj_state" value="closed_beta"><span data-i18n="proj_state_closed_beta">closed beta</span></label>
+          </div>
+          <p class="proj-label" data-i18n="proj_status">project status</p>
+          <div class="proj-opts">
+            <label><input type="radio" name="proj_status" value="ready"><span data-i18n="proj_status_ready">ready</span></label>
+            <label><input type="radio" name="proj_status" value="wip"><span data-i18n="proj_status_wip">in development</span></label>
+            <label><input type="radio" name="proj_status" value="paused"><span data-i18n="proj_status_paused">development paused</span></label>
+            <label><input type="radio" name="proj_status" value="planned"><span data-i18n="proj_status_planned">planned</span></label>
+          </div>
+          <p class="proj-label" data-i18n="proj_versions">versions</p>
+          <div class="proj-opts proj-opts-wrap" data-proj-versions></div>
+          <p class="proj-label" data-i18n="proj_platforms">platforms</p>
+          <div class="proj-opts">
+            <label><input type="checkbox" name="proj_platform" value="fabric"><span>Fabric</span></label>
+            <label><input type="checkbox" name="proj_platform" value="neoforge"><span>NeoForge</span></label>
+            <label><input type="checkbox" name="proj_platform" value="forge"><span>Forge</span></label>
+          </div>
+          <div class="proj-preview-row">
+            <button type="button" class="post-tool" data-preview-btn data-i18n="proj_preview">preview photo</button>
+            <input class="post-photo-input" data-preview-input type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+            <div class="proj-preview-sq" data-preview-view></div>
+          </div>
+        </div>
+        <div class="post-toolbar" data-pub-only>
           <button type="button" class="post-tool post-tool-clip" data-photo-btn data-i18n-title="post_attach">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 6.8v8.1a4.4 4.4 0 0 1-8.8 0V6.6a2.8 2.8 0 1 1 5.6 0v8.1a1.2 1.2 0 0 1-2.4 0V7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </button>
@@ -307,13 +341,13 @@
             <button type="button" class="post-swatch" data-color="#eebd3b" style="background:#eebd3b"></button>
             <button type="button" class="post-swatch" data-color="#ffffff" style="background:#ffffff"></button>
           </span>
-          <button type="button" class="post-tool" data-rgb-toggle>RGB</button>
         </div>
-        <div class="post-rgb" data-rgb-box hidden>
-          <label>R <input type="range" min="0" max="255" value="40" data-rgb="r"></label>
-          <label>G <input type="range" min="0" max="255" value="64" data-rgb="g"></label>
-          <label>B <input type="range" min="0" max="255" value="47" data-rgb="b"></label>
+        <div class="post-rgb" data-rgb-box data-pub-only>
+          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="40" data-rgb="r"><span>R</span></div>
+          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="64" data-rgb="g"><span>G</span></div>
+          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="47" data-rgb="b"><span>B</span></div>
           <button type="button" class="post-swatch post-swatch-preview" data-rgb-apply></button>
+          <input class="rgb-hex" data-rgb-hex maxlength="7" value="#28402f" spellcheck="false">
         </div>
         <p class="account-error" data-post-error></p>
         <div class="account-actions">
@@ -332,9 +366,9 @@
     </div>
   </div>
   <script src="js/config.js"></script>
-  <script src="js/i18n.js?v=43"></script>
-  <script src="js/account.js?v=43"></script>
-  <script src="js/posts.js?v=43"></script>
-  <script src="js/main.js?v=43"></script>
+  <script src="js/i18n.js?v=44"></script>
+  <script src="js/account.js?v=44"></script>
+  <script src="js/posts.js?v=44"></script>
+  <script src="js/main.js?v=44"></script>
 </body>
 </html>
