@@ -9,6 +9,7 @@
   var lastPosts = [];
   var feedKind = "project";
   var savedRange = null;
+  var linkRange = null;
   var confirmFn = null;
   var closeTimer = 0;
   var previewPhoto = null;
@@ -1246,9 +1247,42 @@
     }
   }
 
-  function linkAtCaret() {
+  function snapshotLinkRange() {
+    var box = activeEditor();
+    var range = null;
     var sel = window.getSelection();
-    var node = sel && sel.anchorNode;
+    if (sel && sel.rangeCount) {
+      var node = sel.anchorNode;
+      var el = node && (node.nodeType === 1 ? node : node.parentNode);
+      if (el && el.closest && el.closest("[data-editor], [data-lead]")) {
+        range = sel.getRangeAt(0).cloneRange();
+      }
+    }
+    if (!range && savedRange) {
+      try { range = savedRange.cloneRange(); } catch (e) {}
+    }
+    linkRange = range;
+  }
+
+  function restoreLinkRange() {
+    var box = activeEditor();
+    if (!box || !linkRange) return false;
+    try {
+      if (!box.contains(linkRange.commonAncestorContainer) && box !== linkRange.commonAncestorContainer) return false;
+      box.focus();
+      var sel = window.getSelection();
+      if (!sel) return false;
+      sel.removeAllRanges();
+      sel.addRange(linkRange.cloneRange());
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function linkFromRange() {
+    if (!linkRange) return null;
+    var node = linkRange.commonAncestorContainer;
     var el = node && (node.nodeType === 1 ? node : node.parentNode);
     if (!el || !el.closest) return null;
     var a = el.closest("a");
@@ -1257,13 +1291,26 @@
     return a;
   }
 
+  function linkAtCaret() {
+    return linkFromRange() || (function () {
+      var sel = window.getSelection();
+      var node = sel && sel.anchorNode;
+      var el = node && (node.nodeType === 1 ? node : node.parentNode);
+      if (!el || !el.closest) return null;
+      var a = el.closest("a");
+      var box = activeEditor();
+      if (!a || !box || !box.contains(a)) return null;
+      return a;
+    })();
+  }
+
   function applyLink(url) {
     var href = sanitizeHref(url);
     if (!href) return;
     skipFmtSync = true;
-    restoreSel();
-    var existing = linkAtCaret();
+    restoreLinkRange() || restoreSel();
     var sel = window.getSelection();
+    var existing = linkAtCaret();
     if (existing && sel && (sel.isCollapsed || existing.contains(sel.anchorNode))) {
       existing.setAttribute("href", href);
       existing.setAttribute("target", "_blank");
@@ -1271,22 +1318,19 @@
       saveSel();
       return;
     }
-    if (!sel || !sel.rangeCount) return;
+    if (!sel || !sel.rangeCount || sel.isCollapsed) return;
+    var range = sel.getRangeAt(0);
     var a = document.createElement("a");
     a.setAttribute("href", href);
     a.setAttribute("target", "_blank");
     a.setAttribute("rel", "noopener noreferrer");
-    if (sel.isCollapsed) {
-      a.textContent = href;
-      sel.getRangeAt(0).insertNode(a);
-    } else {
-      try {
-        sel.getRangeAt(0).surroundContents(a);
-      } catch (e) {
-        a.appendChild(sel.getRangeAt(0).extractContents());
-        sel.getRangeAt(0).insertNode(a);
-      }
+    var contents = range.extractContents();
+    if (!(contents.textContent || "").replace(/\u200b/g, "").trim() && !contents.querySelector("img")) {
+      range.insertNode(contents);
+      return;
     }
+    a.appendChild(contents);
+    range.insertNode(a);
     saveSel();
   }
 
@@ -1299,9 +1343,13 @@
     document.querySelectorAll("[data-link-btn]").forEach(function (b) {
       b.classList.toggle("is-on", Boolean(open && (!btn || b === btn)));
     });
-    if (!open) return;
+    if (!open) {
+      linkRange = null;
+      return;
+    }
     setPickerOpen(false);
     restoreSel();
+    snapshotLinkRange();
     var existing = linkAtCaret();
     if (input) input.value = existing ? (existing.getAttribute("href") || "") : "";
     if (btn) {
@@ -1520,6 +1568,10 @@
         var btn = e.target.closest("button");
         if (!btn || !dialog.contains(btn)) return;
         if (btn.closest(".post-toolbar, .post-lead-bar")) e.preventDefault();
+        if (btn.closest("[data-link-btn]")) {
+          saveSel();
+          snapshotLinkRange();
+        }
         if (window.dandelionClick) window.dandelionClick();
       });
     }
@@ -1533,6 +1585,7 @@
       btn.addEventListener("click", function (e) {
         e.stopPropagation();
         saveSel();
+        snapshotLinkRange();
         var pop = $("[data-link-pop]");
         var already = pop && !pop.hidden && btn.classList.contains("is-on");
         setLinkOpen(!already, btn);
