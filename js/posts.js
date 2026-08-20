@@ -335,7 +335,7 @@
   function sanitizeHtml(html) {
     var root = document.createElement("div");
     root.innerHTML = html || "";
-    var allow = { b: 1, i: 1, u: 1, strong: 1, em: 1, span: 1, font: 1, br: 1, p: 1, div: 1, img: 1 };
+    var allow = { b: 1, i: 1, u: 1, s: 1, strike: 1, del: 1, strong: 1, em: 1, span: 1, font: 1, br: 1, p: 1, div: 1, img: 1 };
 
     function clean(node) {
       Array.prototype.slice.call(node.childNodes).forEach(function (child) {

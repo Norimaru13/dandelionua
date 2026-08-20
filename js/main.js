@@ -113,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
       var er = scrollEnd.getBoundingClientRect();
       var pr = pane.getBoundingClientRect();
       var overlap = Math.min(pr.bottom, er.bottom) - Math.max(pr.top, er.top);
-      return overlap > 0 ? overlap : 0;
+      return overlap > 0 ? overlap + 1 : 0;
     }
 
     function metrics() {
