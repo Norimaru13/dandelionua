@@ -18,7 +18,7 @@
   var META_TYPES = ["mod", "datapack", "resourcepack"];
   var META_STATES = ["release", "open_beta", "closed_beta"];
   var META_STATUSES = ["ready", "wip", "paused", "planned"];
-  var META_PLATFORMS = ["fabric", "neoforge", "forge"];
+  var META_PLATFORMS = ["vanilla", "fabric", "neoforge", "forge"];
 
   function $(sel) {
     return document.querySelector(sel);
@@ -734,7 +734,7 @@
         var typeKeys = { mod: "proj_type_mod", datapack: "proj_type_datapack", resourcepack: "proj_type_resourcepack" };
         var stateKeys = { release: "proj_state_release", open_beta: "proj_state_open_beta", closed_beta: "proj_state_closed_beta" };
         var statusKeys = { ready: "proj_status_ready", wip: "proj_status_wip", paused: "proj_status_paused", planned: "proj_status_planned" };
-        var plat = { fabric: "Fabric", neoforge: "NeoForge", forge: "Forge" };
+        var plat = { vanilla: "Vanilla", fabric: "Fabric", neoforge: "NeoForge", forge: "Forge" };
         if (meta.types && meta.types.length) {
           lines.push(t("proj_types") + ": " + meta.types.map(function (v) { return t(typeKeys[v] || v); }).join(", "));
         }

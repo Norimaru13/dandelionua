@@ -3,8 +3,8 @@
 }
 
 :root {
-  --site-cursor: url("../assets/icons/cursor.png?v=46") 0 0, auto;
-  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=46") 0 0, auto;
+  --site-cursor: url("../assets/icons/cursor.png?v=47") 0 0, auto;
+  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=47") 0 0, auto;
 }
 
 html,
@@ -71,8 +71,19 @@ body {
   position: absolute;
   left: 0;
   width: 24px;
-  background: #6371af;
+  background: #28402f;
   border-radius: 0;
+}
+
+.scroll-end-cap {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  height: 0;
+  background: #578c67;
+  z-index: 6;
+  pointer-events: none;
 }
 
 .site-stack {
@@ -1040,7 +1051,7 @@ body[data-list-kind] .feed-more {
   flex: 1;
   min-height: 140px;
   overflow: auto;
-  padding: 10px 12px 48px;
+  padding: 10px 12px;
   border: 2px solid #28402f;
   background: #eaf4fc;
   color: #28402f;
@@ -1048,6 +1059,28 @@ body[data-list-kind] .feed-more {
   font-size: 18px;
   line-height: 1.45;
   cursor: text;
+  scrollbar-width: auto;
+  scrollbar-color: #6371af transparent;
+}
+
+.post-editor::-webkit-scrollbar {
+  width: 16px;
+}
+
+.post-editor::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.post-editor::-webkit-scrollbar-thumb {
+  background: #6371af;
+  border-radius: 0;
+}
+
+.post-controls {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-shrink: 0;
 }
 
 .post-toolbar {
@@ -1055,6 +1088,9 @@ body[data-list-kind] .feed-more {
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 18px;
 }
 
 .post-tool {
@@ -1316,16 +1352,16 @@ body[data-list-kind] .feed-more {
 }
 
 .rgb-hex {
-  flex: 0 0 52px;
-  width: 52px;
-  min-width: 52px;
-  max-width: 52px;
-  padding: 1px 2px;
+  flex: 0 0 104px;
+  width: 104px;
+  min-width: 104px;
+  max-width: 104px;
+  padding: 2px 4px;
   border: 2px solid #28402f;
   background: #eaf4fc;
   color: #28402f;
   font: inherit;
-  font-size: 11px;
+  font-size: 14px;
   line-height: 1.2;
   cursor: text;
 }

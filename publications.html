@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=46">
+  <link rel="stylesheet" href="css/style.css?v=47">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -230,6 +230,7 @@
   <div class="scroll-rail" data-scroll-rail aria-hidden="true">
     <div class="scroll-thumb" data-scroll-thumb></div>
   </div>
+  <div class="scroll-end-cap" data-scroll-cap aria-hidden="true"></div>
   </div>
   <div class="account-modal" data-account-modal hidden>
     <div class="account-dialog">
@@ -307,6 +308,15 @@
             <label class="proj-chip"><input type="checkbox" name="proj_type" value="datapack"><span data-i18n="proj_type_datapack">data pack</span></label>
             <label class="proj-chip"><input type="checkbox" name="proj_type" value="resourcepack"><span data-i18n="proj_type_resourcepack">resource pack</span></label>
           </div>
+          <p class="proj-label" data-i18n="proj_platforms">platforms</p>
+          <div class="proj-opts">
+            <label class="proj-chip"><input type="checkbox" name="proj_platform" value="vanilla"><span>Vanilla</span></label>
+            <label class="proj-chip"><input type="checkbox" name="proj_platform" value="fabric"><span>Fabric</span></label>
+            <label class="proj-chip"><input type="checkbox" name="proj_platform" value="neoforge"><span>NeoForge</span></label>
+            <label class="proj-chip"><input type="checkbox" name="proj_platform" value="forge"><span>Forge</span></label>
+          </div>
+          <p class="proj-label" data-i18n="proj_versions">versions</p>
+          <div class="proj-opts proj-opts-wrap" data-proj-versions></div>
           <p class="proj-label" data-i18n="proj_state">project state</p>
           <div class="proj-opts">
             <label class="proj-chip"><input type="radio" name="proj_state" value="release"><span data-i18n="proj_state_release">release</span></label>
@@ -320,14 +330,6 @@
             <label class="proj-chip"><input type="radio" name="proj_status" value="paused"><span data-i18n="proj_status_paused">development paused</span></label>
             <label class="proj-chip"><input type="radio" name="proj_status" value="planned"><span data-i18n="proj_status_planned">planned</span></label>
           </div>
-          <p class="proj-label" data-i18n="proj_versions">versions</p>
-          <div class="proj-opts proj-opts-wrap" data-proj-versions></div>
-          <p class="proj-label" data-i18n="proj_platforms">platforms</p>
-          <div class="proj-opts">
-            <label class="proj-chip"><input type="checkbox" name="proj_platform" value="fabric"><span>Fabric</span></label>
-            <label class="proj-chip"><input type="checkbox" name="proj_platform" value="neoforge"><span>NeoForge</span></label>
-            <label class="proj-chip"><input type="checkbox" name="proj_platform" value="forge"><span>Forge</span></label>
-          </div>
           <div class="proj-preview-row">
             <button type="button" class="post-tool post-tool-clip" data-preview-btn data-i18n-title="proj_preview">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 6.8v8.1a4.4 4.4 0 0 1-8.8 0V6.6a2.8 2.8 0 1 1 5.6 0v8.1a1.2 1.2 0 0 1-2.4 0V7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
@@ -336,7 +338,15 @@
             <div class="proj-preview-sq" data-preview-view></div>
           </div>
         </div>
-        <div class="post-toolbar" data-pub-only>
+        <div class="post-controls" data-pub-only>
+        <div class="post-rgb" data-rgb-box>
+          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="40" data-rgb="r"><span>R</span></div>
+          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="64" data-rgb="g"><span>G</span></div>
+          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="47" data-rgb="b"><span>B</span></div>
+          <button type="button" class="post-swatch post-swatch-preview" data-rgb-apply></button>
+          <input class="rgb-hex" data-rgb-hex maxlength="7" value="#28402f" spellcheck="false">
+        </div>
+        <div class="post-toolbar">
           <button type="button" class="post-tool post-tool-clip" data-photo-btn data-i18n-title="post_attach">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 6.8v8.1a4.4 4.4 0 0 1-8.8 0V6.6a2.8 2.8 0 1 1 5.6 0v8.1a1.2 1.2 0 0 1-2.4 0V7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
           </button>
@@ -353,12 +363,6 @@
             <button type="button" class="post-swatch" data-color="#ffffff" style="background:#ffffff"></button>
           </span>
         </div>
-        <div class="post-rgb" data-rgb-box data-pub-only>
-          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="40" data-rgb="r"><span>R</span></div>
-          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="64" data-rgb="g"><span>G</span></div>
-          <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="47" data-rgb="b"><span>B</span></div>
-          <button type="button" class="post-swatch post-swatch-preview" data-rgb-apply></button>
-          <input class="rgb-hex" data-rgb-hex maxlength="7" value="#28402f" spellcheck="false">
         </div>
         <p class="account-error" data-post-error></p>
         <div class="account-actions">
@@ -377,9 +381,9 @@
     </div>
   </div>
   <script src="js/config.js"></script>
-  <script src="js/i18n.js?v=46"></script>
-  <script src="js/account.js?v=46"></script>
-  <script src="js/posts.js?v=46"></script>
-  <script src="js/main.js?v=46"></script>
+  <script src="js/i18n.js?v=47"></script>
+  <script src="js/account.js?v=47"></script>
+  <script src="js/posts.js?v=47"></script>
+  <script src="js/main.js?v=47"></script>
 </body>
 </html>
