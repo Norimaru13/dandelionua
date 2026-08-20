@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=53">
+  <link rel="stylesheet" href="css/style.css?v=54">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -278,6 +278,10 @@
           <span data-i18n="post_title">title</span>
           <input name="title_en" maxlength="120">
         </label>
+        <label data-title-ua data-pub-only>
+          <span data-i18n="post_title">title</span>
+          <input name="title_ua" maxlength="120">
+        </label>
         <div class="post-lang-tabs">
           <button type="button" class="post-lang-tab is-active" data-post-lang="en">EN</button>
           <button type="button" class="post-lang-tab" data-post-lang="ua">UA</button>
@@ -289,15 +293,11 @@
             <button type="button" class="post-tool" data-fmt="bold" data-i18n-title="post_bold"><b>B</b></button>
             <button type="button" class="post-tool" data-fmt="italic" data-i18n-title="post_italic"><i>I</i></button>
             <button type="button" class="post-tool" data-fmt="underline" data-i18n-title="post_underline"><u>U</u></button>
-          <button type="button" class="post-tool" data-fmt="strikeThrough" data-i18n-title="post_strike"><s>S</s></button>
+            <button type="button" class="post-tool" data-fmt="strikeThrough" data-i18n-title="post_strike"><s>S</s></button>
           </div>
           <div class="post-editor" data-editor="en" data-pub-only contenteditable="true"></div>
         </div>
         <div class="post-pane" data-post-pane="ua">
-          <label data-pub-only>
-            <span data-i18n="post_title">title</span>
-            <input name="title_ua" maxlength="120">
-          </label>
           <span data-i18n="post_lead">short description</span>
           <div class="post-lead-edit" data-lead="ua" contenteditable="true"></div>
           <div class="post-lead-bar">
@@ -365,7 +365,19 @@
           </span>
         </div>
         <div class="post-rgb" data-rgb-box>
-          <input class="rgb-pick" data-rgb-pick type="color" value="#28402f">
+          <div class="rgb-pick-wrap" data-rgb-pick-wrap>
+            <button type="button" class="rgb-pick" data-rgb-pick aria-expanded="false"></button>
+            <div class="rgb-panel" data-rgb-panel hidden>
+              <div class="rgb-sv">
+                <canvas width="160" height="112" data-rgb-sv-canvas></canvas>
+                <span class="rgb-sv-dot" data-rgb-sv-dot></span>
+              </div>
+              <div class="rgb-hue-col">
+                <canvas width="18" height="112" data-rgb-hue-canvas></canvas>
+                <span class="rgb-hue-mark" data-rgb-hue-mark></span>
+              </div>
+            </div>
+          </div>
           <div class="rgb-sliders">
             <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="40" data-rgb="r"><span>R</span></div>
             <div class="rgb-col"><input class="rgb-slider" type="range" min="0" max="255" value="64" data-rgb="g"><span>G</span></div>
@@ -394,9 +406,9 @@
     </div>
   </div>
   <script src="js/config.js"></script>
-  <script src="js/i18n.js?v=53"></script>
-  <script src="js/account.js?v=53"></script>
-  <script src="js/posts.js?v=53"></script>
-  <script src="js/main.js?v=53"></script>
+  <script src="js/i18n.js?v=54"></script>
+  <script src="js/account.js?v=54"></script>
+  <script src="js/posts.js?v=54"></script>
+  <script src="js/main.js?v=54"></script>
 </body>
 </html>

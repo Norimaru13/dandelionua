@@ -14,6 +14,11 @@
   var previewPhoto = null;
   var lastEdit = null;
   var confirmTimer = 0;
+  var fmtState = { bold: false, italic: false, underline: false, strikeThrough: false };
+  var skipFmtSync = false;
+  var pickH = 120;
+  var pickS = 0.45;
+  var pickV = 0.25;
   var PROJECT_VERSIONS = ["26.2", "26.1.2", "26.1.1", "26.1", "1.21.8", "1.21.1", "1.21", "1.20.1", "1.20", "1.19.4", "1.18.2"];
   var META_TYPES = ["mod", "datapack", "resourcepack"];
   var META_STATES = ["release", "open_beta", "closed_beta"];
@@ -318,14 +323,91 @@
     savedRange = range;
   }
 
+  function paintFmtButtons() {
+    document.querySelectorAll("[data-fmt]").forEach(function (btn) {
+      var cmd = btn.getAttribute("data-fmt");
+      btn.classList.toggle("is-on", Boolean(fmtState[cmd]));
+    });
+  }
+
+  function resetFmtState() {
+    fmtState.bold = false;
+    fmtState.italic = false;
+    fmtState.underline = false;
+    fmtState.strikeThrough = false;
+    paintFmtButtons();
+  }
+
+  function styleCaretSpan(span) {
+    span.setAttribute("data-caret-fmt", "1");
+    span.style.fontWeight = fmtState.bold ? "bold" : "normal";
+    span.style.fontStyle = fmtState.italic ? "italic" : "normal";
+    var deco = [];
+    if (fmtState.underline) deco.push("underline");
+    if (fmtState.strikeThrough) deco.push("line-through");
+    span.style.textDecoration = deco.length ? deco.join(" ") : "none";
+    span.style.color = rgbColor();
+  }
+
+  function emptyCaretSpan(el) {
+    if (!el || !el.getAttribute || el.getAttribute("data-caret-fmt") !== "1") return false;
+    return String(el.textContent || "").replace(/\u200b/g, "") === "";
+  }
+
+  function applyCaretSpan() {
+    var box = activeEditor();
+    if (!box) return;
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+    var node = sel.anchorNode;
+    var parent = node && (node.nodeType === 1 ? node : node.parentNode);
+    if (emptyCaretSpan(parent)) {
+      styleCaretSpan(parent);
+      saveSel();
+      return;
+    }
+    var range = sel.getRangeAt(0);
+    var span = document.createElement("span");
+    styleCaretSpan(span);
+    span.appendChild(document.createTextNode("\u200b"));
+    range.insertNode(span);
+    range = document.createRange();
+    range.setStart(span.firstChild, 1);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+    savedRange = range.cloneRange();
+  }
+
   function applyFmt(cmd, val) {
+    skipFmtSync = true;
     restoreSel();
-    try {
-      document.execCommand("styleWithCSS", false, true);
-      document.execCommand(cmd, false, val || null);
-    } catch (e) {}
+    if (cmd === "foreColor") {
+      try {
+        document.execCommand("styleWithCSS", false, true);
+        document.execCommand("foreColor", false, val || rgbColor());
+      } catch (e) {}
+      applyCaretSpan();
+      saveSel();
+      window.setTimeout(function () { skipFmtSync = false; }, 50);
+      return;
+    }
+    fmtState[cmd] = !fmtState[cmd];
+    var sel = window.getSelection();
+    var hasRange = sel && sel.rangeCount && !sel.isCollapsed;
+    if (hasRange) {
+      try {
+        document.execCommand("styleWithCSS", false, true);
+        var now = false;
+        try { now = document.queryCommandState(cmd); } catch (e2) {}
+        if (now !== fmtState[cmd]) document.execCommand(cmd, false, null);
+      } catch (e) {}
+    } else {
+      applyCaretSpan();
+    }
     saveSel();
-    syncFmtButtons();
+    paintFmtButtons();
+    window.setTimeout(function () { skipFmtSync = false; }, 50);
   }
 
   function applyColorLive() {
@@ -334,19 +416,56 @@
     try {
       sel.removeAllRanges();
       sel.addRange(savedRange.cloneRange());
-      document.execCommand("styleWithCSS", false, true);
-      document.execCommand("foreColor", false, rgbColor());
+      if (sel.rangeCount && !sel.isCollapsed) {
+        document.execCommand("styleWithCSS", false, true);
+        document.execCommand("foreColor", false, rgbColor());
+      } else {
+        applyCaretSpan();
+      }
       if (sel.rangeCount) savedRange = sel.getRangeAt(0).cloneRange();
     } catch (e) {}
   }
 
+  function readComputedFmt(el) {
+    var cs = window.getComputedStyle(el);
+    var weight = String(cs.fontWeight || "");
+    var deco = String(cs.textDecorationLine || cs.textDecoration || "");
+    fmtState.bold = weight === "bold" || Number(weight) >= 700;
+    fmtState.italic = cs.fontStyle === "italic" || cs.fontStyle === "oblique";
+    fmtState.underline = deco.indexOf("underline") >= 0;
+    fmtState.strikeThrough = deco.indexOf("line-through") >= 0;
+  }
+
   function syncFmtButtons() {
-    document.querySelectorAll("[data-fmt]").forEach(function (btn) {
-      var cmd = btn.getAttribute("data-fmt");
-      var on = false;
-      try { on = document.queryCommandState(cmd); } catch (e) {}
-      btn.classList.toggle("is-on", on);
-    });
+    if (skipFmtSync) {
+      paintFmtButtons();
+      return;
+    }
+    var sel = window.getSelection();
+    var node = sel && sel.anchorNode;
+    var el = node && (node.nodeType === 1 ? node : node.parentNode);
+    var inEdit = el && el.closest && lastEdit && lastEdit.contains(el);
+    if (sel && sel.rangeCount && inEdit) {
+      if (!sel.isCollapsed) {
+        ["bold", "italic", "underline", "strikeThrough"].forEach(function (cmd) {
+          var on = false;
+          try { on = document.queryCommandState(cmd); } catch (e) {}
+          fmtState[cmd] = on;
+        });
+      } else {
+        var caret = el.closest ? el.closest("[data-caret-fmt]") : null;
+        if (caret && lastEdit.contains(caret)) {
+          fmtState.bold = caret.style.fontWeight === "bold";
+          fmtState.italic = caret.style.fontStyle === "italic";
+          var deco = caret.style.textDecoration || "";
+          fmtState.underline = deco.indexOf("underline") >= 0;
+          fmtState.strikeThrough = deco.indexOf("line-through") >= 0;
+        } else {
+          readComputedFmt(el);
+        }
+      }
+    }
+    paintFmtButtons();
   }
 
   function sanitizeColor(value) {
@@ -578,6 +697,8 @@
     setPostError("");
     setPostLang(typeof getLang === "function" && getLang() === "ua" ? "ua" : "en");
     syncFormKind();
+    resetFmtState();
+    setPickerOpen(false);
     syncRgbPreview();
   }
 
@@ -912,6 +1033,120 @@
     return "rgb(" + (r ? r.value : 40) + ", " + (g ? g.value : 64) + ", " + (b ? b.value : 47) + ")";
   }
 
+  function hsvToRgb(h, s, v) {
+    var c = v * s;
+    var x = c * (1 - Math.abs((h / 60) % 2 - 1));
+    var m = v - c;
+    var r = 0;
+    var g = 0;
+    var b = 0;
+    if (h < 60) { r = c; g = x; }
+    else if (h < 120) { r = x; g = c; }
+    else if (h < 180) { g = c; b = x; }
+    else if (h < 240) { g = x; b = c; }
+    else if (h < 300) { r = x; b = c; }
+    else { r = c; b = x; }
+    return {
+      r: Math.round((r + m) * 255),
+      g: Math.round((g + m) * 255),
+      b: Math.round((b + m) * 255)
+    };
+  }
+
+  function rgbToHsv(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    var max = Math.max(r, g, b);
+    var min = Math.min(r, g, b);
+    var d = max - min;
+    var h = pickH;
+    if (d !== 0) {
+      if (max === r) h = ((g - b) / d) % 6;
+      else if (max === g) h = (b - r) / d + 2;
+      else h = (r - g) / d + 4;
+      h *= 60;
+      if (h < 0) h += 360;
+    }
+    return { h: h, s: max === 0 ? 0 : d / max, v: max };
+  }
+
+  function hsvFromSliders() {
+    var c = rgbParts();
+    var hsv = rgbToHsv(c.r, c.g, c.b);
+    pickH = hsv.h;
+    pickS = hsv.s;
+    pickV = hsv.v;
+  }
+
+  function applyHsvToRgb() {
+    var rgb = hsvToRgb(pickH, pickS, pickV);
+    var r = $('[data-rgb="r"]');
+    var g = $('[data-rgb="g"]');
+    var b = $('[data-rgb="b"]');
+    if (r) r.value = rgb.r;
+    if (g) g.value = rgb.g;
+    if (b) b.value = rgb.b;
+    syncRgbPreview();
+    applyColorLive();
+  }
+
+  function paintPicker() {
+    var sv = $("[data-rgb-sv-canvas]");
+    var hue = $("[data-rgb-hue-canvas]");
+    if (sv) {
+      var ctx = sv.getContext("2d");
+      var w = sv.width;
+      var h = sv.height;
+      var top = hsvToRgb(pickH, 1, 1);
+      ctx.fillStyle = "rgb(" + top.r + "," + top.g + "," + top.b + ")";
+      ctx.fillRect(0, 0, w, h);
+      var white = ctx.createLinearGradient(0, 0, w, 0);
+      white.addColorStop(0, "#ffffff");
+      white.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = white;
+      ctx.fillRect(0, 0, w, h);
+      var black = ctx.createLinearGradient(0, 0, 0, h);
+      black.addColorStop(0, "rgba(0,0,0,0)");
+      black.addColorStop(1, "#000000");
+      ctx.fillStyle = black;
+      ctx.fillRect(0, 0, w, h);
+    }
+    if (hue) {
+      var hctx = hue.getContext("2d");
+      var hh = hue.height;
+      var hw = hue.width;
+      var i;
+      for (i = 0; i < hh; i += 1) {
+        var rgb = hsvToRgb((i / hh) * 360, 1, 1);
+        hctx.fillStyle = "rgb(" + rgb.r + "," + rgb.g + "," + rgb.b + ")";
+        hctx.fillRect(0, i, hw, 2);
+      }
+    }
+    var dot = $("[data-rgb-sv-dot]");
+    if (dot) {
+      dot.style.left = (pickS * 100) + "%";
+      dot.style.top = ((1 - pickV) * 100) + "%";
+    }
+    var mark = $("[data-rgb-hue-mark]");
+    if (mark) mark.style.top = ((pickH / 360) * 100) + "%";
+  }
+
+  function setPickerOpen(open) {
+    var wrap = $("[data-rgb-pick-wrap]");
+    var panel = $("[data-rgb-panel]");
+    var btn = $("[data-rgb-pick]");
+    if (!wrap || !panel || !btn) return;
+    wrap.classList.toggle("is-open", open);
+    btn.classList.toggle("is-open", open);
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    panel.hidden = !open;
+    if (open) {
+      hsvFromSliders();
+      paintPicker();
+    }
+  }
+
   function setWriteColor(hex) {
     var parsed = parseHex(hex);
     if (!parsed) return;
@@ -921,6 +1156,7 @@
     if (r) r.value = parsed.r;
     if (g) g.value = parsed.g;
     if (b) b.value = parsed.b;
+    hsvFromSliders();
     syncRgbPreview();
   }
 
@@ -946,7 +1182,9 @@
     var hexStr = "#" + toHex(c.r) + toHex(c.g) + toHex(c.b);
     if (hex && document.activeElement !== hex) hex.value = hexStr;
     var pick = $("[data-rgb-pick]");
-    if (pick && document.activeElement !== pick) pick.value = hexStr;
+    if (pick) pick.style.background = hexStr;
+    var wrap = $("[data-rgb-pick-wrap]");
+    if (wrap && wrap.classList.contains("is-open")) paintPicker();
     if (r) r.style.setProperty("--rgb-track", "linear-gradient(to top, rgb(0," + c.g + "," + c.b + "), rgb(255," + c.g + "," + c.b + "))");
     if (g) g.style.setProperty("--rgb-track", "linear-gradient(to top, rgb(" + c.r + ",0," + c.b + "), rgb(" + c.r + ",255," + c.b + "))");
     if (b) b.style.setProperty("--rgb-track", "linear-gradient(to top, rgb(" + c.r + "," + c.g + ",0), rgb(" + c.r + "," + c.g + ",255))");
@@ -1122,18 +1360,55 @@
     document.querySelectorAll("[data-rgb]").forEach(function (input) {
       input.addEventListener("pointerdown", saveSel);
       input.addEventListener("input", function () {
+        hsvFromSliders();
         syncRgbPreview();
         applyColorLive();
       });
     });
     var pick = $("[data-rgb-pick]");
     if (pick) {
-      pick.addEventListener("pointerdown", saveSel);
-      pick.addEventListener("input", function () {
-        setWriteColor(pick.value);
-        applyColorLive();
+      pick.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        saveSel();
+        var wrap = $("[data-rgb-pick-wrap]");
+        setPickerOpen(!(wrap && wrap.classList.contains("is-open")));
       });
     }
+    function bindPickerDrag(canvas, handler) {
+      if (!canvas) return;
+      canvas.addEventListener("pointerdown", function (e) {
+        e.preventDefault();
+        saveSel();
+        canvas.setPointerCapture(e.pointerId);
+        handler(e);
+      });
+      canvas.addEventListener("pointermove", function (e) {
+        if (!canvas.hasPointerCapture(e.pointerId)) return;
+        handler(e);
+      });
+    }
+    bindPickerDrag($("[data-rgb-sv-canvas]"), function (e) {
+      var canvas = $("[data-rgb-sv-canvas]");
+      if (!canvas) return;
+      var rect = canvas.getBoundingClientRect();
+      pickS = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+      pickV = 1 - Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height));
+      applyHsvToRgb();
+    });
+    bindPickerDrag($("[data-rgb-hue-canvas]"), function (e) {
+      var canvas = $("[data-rgb-hue-canvas]");
+      if (!canvas) return;
+      var rect = canvas.getBoundingClientRect();
+      pickH = Math.min(359, Math.max(0, ((e.clientY - rect.top) / rect.height) * 360));
+      applyHsvToRgb();
+    });
+    document.addEventListener("click", function (e) {
+      var wrap = $("[data-rgb-pick-wrap]");
+      if (!wrap || !wrap.classList.contains("is-open")) return;
+      if (wrap.contains(e.target)) return;
+      setPickerOpen(false);
+    });
     var rgbApply = $("[data-rgb-apply]");
     if (rgbApply) {
       rgbApply.addEventListener("click", function () {
@@ -1152,6 +1427,7 @@
         if (r) r.value = parsed.r;
         if (g) g.value = parsed.g;
         if (b) b.value = parsed.b;
+        hsvFromSliders();
         syncRgbPreview();
         applyColorLive();
       });
