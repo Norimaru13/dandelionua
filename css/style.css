@@ -925,6 +925,14 @@ body[data-list-kind] .feed-more {
   white-space: normal;
 }
 
+.post-editor a,
+.post-lead-edit a,
+.post-body-html a,
+.post-lead-html a {
+  color: inherit;
+  text-decoration: underline;
+}
+
 .post-body-html img,
 .post-editor img {
   max-width: 100%;
@@ -1172,17 +1180,20 @@ body[data-list-kind] .feed-more {
 
 .post-tool {
   width: 36px;
-  height: 32px;
+  height: 36px;
   padding: 0;
-  border: 2px solid #28402f;
-  background: #eaf4fc;
-  color: #28402f;
+  border: 0;
+  background: #7d8bb8;
+  color: #eaf4fc;
   font: inherit;
   font-size: 16px;
+  transition: background 0.2s ease, outline 0.2s ease;
 }
 
 .post-tool.is-on {
   background: #6371af;
+  outline: 2px solid #28402f;
+  outline-offset: -2px;
   color: #eaf4fc;
 }
 
@@ -1311,6 +1322,35 @@ body[data-list-kind] .feed-more {
 .post-lead-bar {
   display: flex;
   gap: 6px;
+}
+
+.link-pop {
+  display: none;
+  position: fixed;
+  z-index: 95;
+  padding: 8px;
+  background: #eaf4fc;
+  border: 2px solid #28402f;
+  box-shadow: 4px 4px 0 #28402f;
+}
+
+.link-pop.is-open {
+  display: block;
+}
+
+.link-pop[hidden] {
+  display: none !important;
+}
+
+.link-pop-input {
+  box-sizing: border-box;
+  width: 280px;
+  padding: 8px;
+  border: 2px solid #28402f;
+  background: #eaf4fc;
+  color: #28402f;
+  font: inherit;
+  font-size: 16px;
 }
 
 .post-lead-html b,

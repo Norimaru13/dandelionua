@@ -537,6 +537,18 @@
     paintFmtButtons();
   }
 
+  function sanitizeHref(raw) {
+    var s = String(raw || "").trim();
+    if (!s) return "";
+    s = s.replace(/[\s<>"']/g, "");
+    var lower = s.toLowerCase();
+    if (lower.indexOf("javascript:") === 0 || lower.indexOf("data:") === 0 || lower.indexOf("vbscript:") === 0) return "";
+    if (/^https?:\/\//i.test(s) || lower.indexOf("mailto:") === 0) return s;
+    if (s.indexOf("://") >= 0) return "";
+    if (s.charAt(0) === "#" || s.charAt(0) === "/") return s;
+    return "https://" + s;
+  }
+
   function sanitizeColor(value) {
     var c = String(value || "").trim();
     if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(c)) return c.toLowerCase();
@@ -550,7 +562,7 @@
   function sanitizeHtml(html) {
     var root = document.createElement("div");
     root.innerHTML = html || "";
-    var allow = { b: 1, i: 1, u: 1, s: 1, strike: 1, del: 1, strong: 1, em: 1, span: 1, font: 1, br: 1, p: 1, div: 1, img: 1 };
+    var allow = { a: 1, b: 1, i: 1, u: 1, s: 1, strike: 1, del: 1, strong: 1, em: 1, span: 1, font: 1, br: 1, p: 1, div: 1, img: 1 };
 
     function clean(node) {
       Array.prototype.slice.call(node.childNodes).forEach(function (child) {
@@ -572,6 +584,22 @@
           while (child.firstChild) span.appendChild(child.firstChild);
           node.replaceChild(span, child);
           clean(span);
+          return;
+        }
+        if (tag === "a") {
+          var href = sanitizeHref(child.getAttribute("href") || "");
+          Array.prototype.slice.call(child.attributes).forEach(function (attr) {
+            child.removeAttribute(attr.name);
+          });
+          if (!href) {
+            while (child.firstChild) node.insertBefore(child.firstChild, child);
+            node.removeChild(child);
+            return;
+          }
+          child.setAttribute("href", href);
+          child.setAttribute("target", "_blank");
+          child.setAttribute("rel", "noopener noreferrer");
+          clean(child);
           return;
         }
         if (tag === "img") {
@@ -768,6 +796,7 @@
     syncFormKind();
     resetFmtState();
     setPickerOpen(false);
+    setLinkOpen(false);
     syncRgbPreview();
   }
 
@@ -1213,6 +1242,82 @@
     if (open) {
       hsvFromSliders();
       paintPicker();
+      setLinkOpen(false);
+    }
+  }
+
+  function linkAtCaret() {
+    var sel = window.getSelection();
+    var node = sel && sel.anchorNode;
+    var el = node && (node.nodeType === 1 ? node : node.parentNode);
+    if (!el || !el.closest) return null;
+    var a = el.closest("a");
+    var box = activeEditor();
+    if (!a || !box || !box.contains(a)) return null;
+    return a;
+  }
+
+  function applyLink(url) {
+    var href = sanitizeHref(url);
+    if (!href) return;
+    skipFmtSync = true;
+    restoreSel();
+    var existing = linkAtCaret();
+    var sel = window.getSelection();
+    if (existing && sel && (sel.isCollapsed || existing.contains(sel.anchorNode))) {
+      existing.setAttribute("href", href);
+      existing.setAttribute("target", "_blank");
+      existing.setAttribute("rel", "noopener noreferrer");
+      saveSel();
+      return;
+    }
+    if (!sel || !sel.rangeCount) return;
+    var a = document.createElement("a");
+    a.setAttribute("href", href);
+    a.setAttribute("target", "_blank");
+    a.setAttribute("rel", "noopener noreferrer");
+    if (sel.isCollapsed) {
+      a.textContent = href;
+      sel.getRangeAt(0).insertNode(a);
+    } else {
+      try {
+        sel.getRangeAt(0).surroundContents(a);
+      } catch (e) {
+        a.appendChild(sel.getRangeAt(0).extractContents());
+        sel.getRangeAt(0).insertNode(a);
+      }
+    }
+    saveSel();
+  }
+
+  function setLinkOpen(open, btn) {
+    var pop = $("[data-link-pop]");
+    var input = $("[data-link-input]");
+    if (!pop) return;
+    pop.hidden = !open;
+    pop.classList.toggle("is-open", open);
+    document.querySelectorAll("[data-link-btn]").forEach(function (b) {
+      b.classList.toggle("is-on", Boolean(open && (!btn || b === btn)));
+    });
+    if (!open) return;
+    setPickerOpen(false);
+    restoreSel();
+    var existing = linkAtCaret();
+    if (input) input.value = existing ? (existing.getAttribute("href") || "") : "";
+    if (btn) {
+      var r = btn.getBoundingClientRect();
+      pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 300)) + "px";
+      pop.style.top = (r.bottom + 6) + "px";
+      var ph = pop.offsetHeight || 52;
+      if (r.bottom + 6 + ph > window.innerHeight) {
+        pop.style.top = Math.max(8, r.top - 6 - ph) + "px";
+      }
+    }
+    if (input) {
+      window.setTimeout(function () {
+        input.focus();
+        input.select();
+      }, 0);
     }
   }
 
@@ -1403,6 +1508,10 @@
         lastEdit = box;
         saveSel();
       });
+      box.addEventListener("click", function (e) {
+        var a = e.target.closest("a");
+        if (a && box.contains(a)) e.preventDefault();
+      });
     });
 
     var dialog = document.querySelector(".post-dialog");
@@ -1419,6 +1528,37 @@
       btn.addEventListener("click", function () {
         applyFmt(btn.getAttribute("data-fmt"));
       });
+    });
+    document.querySelectorAll("[data-link-btn]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        saveSel();
+        var pop = $("[data-link-pop]");
+        var already = pop && !pop.hidden && btn.classList.contains("is-on");
+        setLinkOpen(!already, btn);
+      });
+    });
+    var linkInput = $("[data-link-input]");
+    if (linkInput) {
+      linkInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          applyLink(linkInput.value);
+          setLinkOpen(false);
+        }
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setLinkOpen(false);
+        }
+      });
+    }
+    document.addEventListener("click", function (e) {
+      var pop = $("[data-link-pop]");
+      if (!pop || pop.hidden) return;
+      if (pop.contains(e.target) || e.target.closest("[data-link-btn]")) return;
+      var href = linkInput ? String(linkInput.value || "").trim() : "";
+      if (href) applyLink(href);
+      setLinkOpen(false);
     });
     document.addEventListener("selectionchange", syncFmtButtons);
 
