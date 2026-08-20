@@ -30,16 +30,26 @@ var translations = {
     err_auth: "log in to like",
     err_no_db: "could not reach the server",
     post_create: "Create publication",
+    post_title: "title",
     post_title_en: "title (EN)",
     post_title_ua: "title (UA)",
+    post_lead: "short description",
     post_body_en: "description (EN)",
     post_body_ua: "description (UA)",
     post_photos: "photos (up to 4)",
     post_publish: "publish",
+    post_bold: "bold",
+    post_italic: "italic",
+    post_underline: "underline",
+    post_attach: "insert photo",
+    post_close_confirm: "Close without saving?",
+    confirm_yes: "yes",
+    confirm_no: "no",
     err_empty_post: "enter a title",
     err_forbidden: "only the admin can publish",
     err_photo_big: "photo is too large (max ~500 KB)",
     err_photo_type: "photo: jpg, png, webp or gif",
+    err_photo_many: "up to 4 photos",
     post_more: "more",
     post_edit: "edit",
     post_delete: "delete",
@@ -81,16 +91,26 @@ var translations = {
     err_auth: "щоб поставити вподобайку, увійди в профіль",
     err_no_db: "не вдалося зв’язатися з сервером",
     post_create: "Створити публікацію",
+    post_title: "назва",
     post_title_en: "назва (EN)",
     post_title_ua: "назва (UA)",
+    post_lead: "короткий опис",
     post_body_en: "опис (EN)",
     post_body_ua: "опис (UA)",
     post_photos: "фото (до 4)",
     post_publish: "опублікувати",
+    post_bold: "напівжирний",
+    post_italic: "курсив",
+    post_underline: "підкреслення",
+    post_attach: "вставити фото",
+    post_close_confirm: "Закрити без збереження?",
+    confirm_yes: "так",
+    confirm_no: "ні",
     err_empty_post: "введи назву",
     err_forbidden: "публікувати може лише адміністратор",
     err_photo_big: "фото завелике (макс. близько 500 КБ)",
     err_photo_type: "фото: jpg, png, webp або gif",
+    err_photo_many: "не більше 4 фото",
     post_more: "ще",
     post_edit: "редагувати",
     post_delete: "видалити",
@@ -135,6 +155,12 @@ function applyI18n() {
 
   document.querySelectorAll("[data-i18n]").forEach(function (el) {
     el.textContent = t(el.getAttribute("data-i18n"));
+  });
+
+  document.querySelectorAll("[data-i18n-title]").forEach(function (el) {
+    var label = t(el.getAttribute("data-i18n-title"));
+    el.setAttribute("title", label);
+    el.setAttribute("aria-label", label);
   });
 
   document.querySelectorAll(".lang-btn").forEach(function (btn) {
