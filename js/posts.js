@@ -1086,7 +1086,13 @@
     }
 
     document.querySelectorAll("[data-rgb]").forEach(function (input) {
-      input.addEventListener("input", syncRgbPreview);
+      input.addEventListener("mousedown", saveSel);
+      input.addEventListener("input", function () {
+        var active = document.activeElement;
+        syncRgbPreview();
+        applyFmt("foreColor", rgbColor());
+        if (active && active.focus) active.focus();
+      });
     });
     var rgbApply = $("[data-rgb-apply]");
     if (rgbApply) {
@@ -1096,6 +1102,7 @@
     }
     var hex = $("[data-rgb-hex]");
     if (hex) {
+      hex.addEventListener("focus", saveSel);
       hex.addEventListener("input", function () {
         var parsed = parseHex(hex.value);
         if (!parsed) return;
@@ -1105,11 +1112,10 @@
         if (r) r.value = parsed.r;
         if (g) g.value = parsed.g;
         if (b) b.value = parsed.b;
+        var active = document.activeElement;
         syncRgbPreview();
-      });
-      hex.addEventListener("change", function () {
-        var parsed = parseHex(hex.value);
-        if (parsed) applyFmt("foreColor", rgbColor());
+        applyFmt("foreColor", rgbColor());
+        if (active && active.focus) active.focus();
       });
     }
     syncRgbPreview();

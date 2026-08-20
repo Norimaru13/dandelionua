@@ -3,8 +3,8 @@
 }
 
 :root {
-  --site-cursor: url("../assets/icons/cursor.png?v=45") 0 0, auto;
-  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=45") 0 0, auto;
+  --site-cursor: url("../assets/icons/cursor.png?v=46") 0 0, auto;
+  --site-cursor-hover: url("../assets/icons/cursor_select.png?v=46") 0 0, auto;
 }
 
 html,
@@ -63,7 +63,7 @@ body {
   right: 0;
   bottom: 0;
   width: 24px;
-  background: transparent;
+  background: #7d8bb8;
   z-index: 5;
 }
 
@@ -71,7 +71,7 @@ body {
   position: absolute;
   left: 0;
   width: 24px;
-  background: #28402f;
+  background: #6371af;
   border-radius: 0;
 }
 
@@ -522,12 +522,33 @@ button {
   pointer-events: auto;
 }
 
+.site-end {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.site-end::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  background: #578c67;
+  pointer-events: none;
+}
+
+.footer-stripe {
+  height: 1.5px;
+  background: #96a5d5;
+}
+
 .site-footer {
   flex-shrink: 0;
   background: #6371af;
   color: #28402f;
   text-align: center;
-  padding: 16px 12px;
+  padding: 16px 36px 16px 12px;
   font-size: 18px;
 }
 
@@ -953,7 +974,7 @@ body[data-list-kind] .feed-more {
   font-size: 16px;
 }
 
-.post-form input:not([type="range"]):not([type="file"]),
+.post-form input:not([type="range"]):not([type="file"]):not(.rgb-hex),
 .post-form select {
   box-sizing: border-box;
   width: 100%;
@@ -1138,11 +1159,10 @@ body[data-list-kind] .feed-more {
   justify-content: center;
   min-height: 36px;
   padding: 0 14px;
-  background: #9aa6c9;
+  background: #7d8bb8;
   color: #eaf4fc;
   font-size: 16px;
-  opacity: 0.7;
-  transition: background 0.2s ease, opacity 0.2s ease, outline 0.2s ease;
+  transition: background 0.2s ease, outline 0.2s ease;
 }
 
 .proj-chip input:checked + span,
@@ -1296,13 +1316,17 @@ body[data-list-kind] .feed-more {
 }
 
 .rgb-hex {
-  width: 64px;
-  padding: 2px 4px;
+  flex: 0 0 52px;
+  width: 52px;
+  min-width: 52px;
+  max-width: 52px;
+  padding: 1px 2px;
   border: 2px solid #28402f;
   background: #eaf4fc;
   color: #28402f;
   font: inherit;
-  font-size: 13px;
+  font-size: 11px;
+  line-height: 1.2;
   cursor: text;
 }
 

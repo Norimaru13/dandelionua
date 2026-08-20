@@ -101,25 +101,41 @@ document.addEventListener("DOMContentLoaded", function () {
   var scroller = document.querySelector("[data-scroll]");
   var rail = document.querySelector("[data-scroll-rail]");
   var thumb = document.querySelector("[data-scroll-thumb]");
+  var scrollEnd = document.querySelector("[data-scroll-end]");
+  var pane = document.querySelector(".site-pane");
   if (scroller && rail && thumb) {
     var dragging = false;
     var dragY = 0;
     var dragTop = 0;
 
+    function endOverlap() {
+      if (!scrollEnd || !pane) return 0;
+      var er = scrollEnd.getBoundingClientRect();
+      var pr = pane.getBoundingClientRect();
+      var overlap = Math.min(pr.bottom, er.bottom) - Math.max(pr.top, er.top);
+      return overlap > 0 ? overlap : 0;
+    }
+
     function metrics() {
+      var overlap = endOverlap();
       var view = scroller.clientHeight;
+      var track = Math.max(view - overlap, 0);
       var full = scroller.scrollHeight;
       var maxScroll = Math.max(full - view, 0);
-      var thumbH = maxScroll === 0 ? 0 : Math.max((view / full) * view, 48);
+      var thumbH = maxScroll === 0 ? 0 : Math.max((track / full) * track, 48);
+      if (thumbH > track) thumbH = track;
       return {
         view: view,
+        track: track,
         maxScroll: maxScroll,
         thumbH: thumbH,
-        maxTop: view - thumbH
+        maxTop: Math.max(track - thumbH, 0)
       };
     }
 
     function syncThumb() {
+      var overlap = endOverlap();
+      rail.style.bottom = overlap + "px";
       var m = metrics();
       if (m.maxScroll === 0) {
         thumb.style.display = "none";
@@ -127,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       thumb.style.display = "block";
       thumb.style.height = m.thumbH + "px";
-      thumb.style.top = (scroller.scrollTop / m.maxScroll) * m.maxTop + "px";
+      thumb.style.top = m.maxTop === 0 ? "0px" : (scroller.scrollTop / m.maxScroll) * m.maxTop + "px";
     }
 
     scroller.addEventListener("scroll", syncThumb);
@@ -135,6 +151,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (window.ResizeObserver) {
       new ResizeObserver(syncThumb).observe(scroller);
       if (scroller.firstElementChild) new ResizeObserver(syncThumb).observe(scroller.firstElementChild);
+      if (scrollEnd) new ResizeObserver(syncThumb).observe(scrollEnd);
     }
 
     thumb.addEventListener("mousedown", function (e) {
