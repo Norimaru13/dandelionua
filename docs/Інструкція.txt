@@ -65,7 +65,7 @@
 
 ---
 
-## 5. Поточний стан (етап 40)
+## 5. Поточний стан (етап 41)
 
 Тестову `post.html` прибрано. Кнопки кульбаби і мови мають чотири стани. Іконки меню з’являються тільки коли меню відкрите.
 
@@ -78,7 +78,7 @@
 - Три смужки між хедером і тілом, зверху вниз: `#96a5d5`, `#0057b8`, `#ffd700`
 - Кнопка-кульбаба: default / hover / press / active (`dandelion_button_active.png`, коли меню відкрите)
 - Меню кульбаби, зліва направо: Modrinth, CurseForge, MCreator, Telegram, Discord, Reddit
-- Посилання (нова вкладка): Modrinth https://modrinth.com/user/dandelion_ua ; CurseForge https://www.curseforge.com/members/dandelion_ua/projects ; MCreator https://mcreator.net/user/800904/dandelionua ; Telegram https://t.me/dandelion_ua_tg . Discord і Reddit поки без посилань
+- Посилання (нова вкладка): Modrinth https://modrinth.com/user/dandelion_ua ; CurseForge https://www.curseforge.com/members/dandelion_ua/projects ; MCreator https://mcreator.net/user/800904/dandelionua ; Telegram https://t.me/dandelion_ua_tg ; Discord https://discord.gg/SyBSh4hfQ8 ; Reddit https://www.reddit.com/user/kitaro_7/
 - Наведення на іконку мережі показує назву мовою сайту
 - Іконки меню не видно, поки меню закрите
 - Усі картинки лежать у `assets/icons/`
@@ -103,7 +103,7 @@
 
 - Кнопка «увійти» в хедері. Без профілю сайт дивитися можна, лайк — ні.
 - Вподобайка на головній (сторінка `home`)
-- Під таблицею вкладки Проекти / Публікації (за замовчуванням Проекти), по 3 останніх і «дивитись більше»
+- Під таблицею вкладки Проєкти / Публікації (за замовчуванням Проєкти), по 3 останніх і «дивитись більше». Українською Modrinth — «Модрінт»
 - Сторінки `projects.html` і `publications.html` — повний список
 - Клік по центральній текстурі хедера веде на головну
 - Сірий виступ у хедері зліва — меню сторінок, виїжджає вниз з анімацією
