@@ -1175,14 +1175,14 @@ body[data-list-kind] .feed-more {
   height: 32px;
   padding: 0;
   border: 2px solid #28402f;
-  background: #9e9e9e;
+  background: #eaf4fc;
   color: #28402f;
   font: inherit;
   font-size: 16px;
 }
 
 .post-tool.is-on {
-  background: #6e6e6e;
+  background: #6371af;
   color: #eaf4fc;
 }
 

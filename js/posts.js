@@ -338,6 +338,21 @@
     paintFmtButtons();
   }
 
+  function decoLineOf(el) {
+    if (!el || el.nodeType !== 1) return "";
+    return String(el.style.textDecorationLine || el.style.textDecoration || "");
+  }
+
+  function ownDeco(el) {
+    if (!el || el.nodeType !== 1) return { u: false, s: false };
+    var tag = el.tagName.toLowerCase();
+    var line = decoLineOf(el);
+    return {
+      u: tag === "u" || line.indexOf("underline") >= 0,
+      s: tag === "s" || tag === "strike" || tag === "del" || line.indexOf("line-through") >= 0
+    };
+  }
+
   function styleCaretSpan(span) {
     span.setAttribute("data-caret-fmt", "1");
     span.style.fontWeight = fmtState.bold ? "bold" : "normal";
@@ -345,7 +360,9 @@
     var deco = [];
     if (fmtState.underline) deco.push("underline");
     if (fmtState.strikeThrough) deco.push("line-through");
-    span.style.textDecoration = deco.length ? deco.join(" ") : "none";
+    var line = deco.length ? deco.join(" ") : "none";
+    span.style.textDecoration = line;
+    span.style.textDecorationLine = line;
     span.style.color = rgbColor();
   }
 
@@ -354,10 +371,57 @@
     return String(el.textContent || "").replace(/\u200b/g, "") === "";
   }
 
+  function splitDecorated(node, box) {
+    var sel = window.getSelection();
+    if (!node || node === box || !node.parentNode || !sel || !sel.rangeCount) return;
+    var caret = sel.getRangeAt(0);
+    if (!node.contains(caret.endContainer) && node !== caret.endContainer) return;
+    var tail = document.createRange();
+    tail.selectNodeContents(node);
+    try {
+      tail.setStart(caret.endContainer, caret.endOffset);
+    } catch (err) {
+      return;
+    }
+    var frag = tail.extractContents();
+    var clone = node.cloneNode(false);
+    clone.appendChild(frag);
+    if (node.nextSibling) node.parentNode.insertBefore(clone, node.nextSibling);
+    else node.parentNode.appendChild(clone);
+    var r = document.createRange();
+    r.setStartAfter(node);
+    r.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(r);
+    savedRange = r.cloneRange();
+  }
+
+  function liftCaretForFmt(box) {
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+    var node = sel.anchorNode;
+    var el = node && (node.nodeType === 1 ? node : node.parentNode);
+    var splitList = [];
+    var walk = el;
+    while (walk && walk !== box) {
+      var d = ownDeco(walk);
+      var keep = emptyCaretSpan(walk);
+      if (!keep && ((d.s && !fmtState.strikeThrough) || (d.u && !fmtState.underline))) {
+        splitList.push(walk);
+      }
+      walk = walk.parentNode;
+    }
+    var i;
+    for (i = 0; i < splitList.length; i += 1) splitDecorated(splitList[i], box);
+  }
+
   function applyCaretSpan() {
     var box = activeEditor();
     if (!box) return;
     var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
+    liftCaretForFmt(box);
+    sel = window.getSelection();
     if (!sel || !sel.rangeCount || !sel.isCollapsed) return;
     var node = sel.anchorNode;
     var parent = node && (node.nodeType === 1 ? node : node.parentNode);
@@ -389,7 +453,6 @@
       } catch (e) {}
       applyCaretSpan();
       saveSel();
-      window.setTimeout(function () { skipFmtSync = false; }, 50);
       return;
     }
     fmtState[cmd] = !fmtState[cmd];
@@ -402,12 +465,10 @@
         try { now = document.queryCommandState(cmd); } catch (e2) {}
         if (now !== fmtState[cmd]) document.execCommand(cmd, false, null);
       } catch (e) {}
-    } else {
-      applyCaretSpan();
     }
+    applyCaretSpan();
     saveSel();
     paintFmtButtons();
-    window.setTimeout(function () { skipFmtSync = false; }, 50);
   }
 
   function applyColorLive() {
@@ -429,11 +490,19 @@
   function readComputedFmt(el) {
     var cs = window.getComputedStyle(el);
     var weight = String(cs.fontWeight || "");
-    var deco = String(cs.textDecorationLine || cs.textDecoration || "");
     fmtState.bold = weight === "bold" || Number(weight) >= 700;
     fmtState.italic = cs.fontStyle === "italic" || cs.fontStyle === "oblique";
-    fmtState.underline = deco.indexOf("underline") >= 0;
-    fmtState.strikeThrough = deco.indexOf("line-through") >= 0;
+    var u = false;
+    var s = false;
+    var n = el;
+    while (n && lastEdit && n !== lastEdit) {
+      var d = ownDeco(n);
+      if (d.u) u = true;
+      if (d.s) s = true;
+      n = n.parentNode;
+    }
+    fmtState.underline = u;
+    fmtState.strikeThrough = s;
   }
 
   function syncFmtButtons() {
@@ -457,7 +526,7 @@
         if (caret && lastEdit.contains(caret)) {
           fmtState.bold = caret.style.fontWeight === "bold";
           fmtState.italic = caret.style.fontStyle === "italic";
-          var deco = caret.style.textDecoration || "";
+          var deco = decoLineOf(caret);
           fmtState.underline = deco.indexOf("underline") >= 0;
           fmtState.strikeThrough = deco.indexOf("line-through") >= 0;
         } else {
@@ -1320,21 +1389,31 @@
     });
 
     document.querySelectorAll("[data-editor], [data-lead]").forEach(function (box) {
-      box.addEventListener("keyup", saveSel);
-      box.addEventListener("mouseup", saveSel);
+      box.addEventListener("keyup", function () {
+        skipFmtSync = false;
+        saveSel();
+        syncFmtButtons();
+      });
+      box.addEventListener("mouseup", function () {
+        skipFmtSync = false;
+        saveSel();
+        syncFmtButtons();
+      });
       box.addEventListener("focus", function () {
         lastEdit = box;
         saveSel();
       });
     });
 
-    document.querySelectorAll(".post-toolbar, .post-lead-bar").forEach(function (toolbar) {
-      toolbar.addEventListener("mousedown", function (e) {
-        if (!e.target.closest("button")) return;
-        e.preventDefault();
+    var dialog = document.querySelector(".post-dialog");
+    if (dialog) {
+      dialog.addEventListener("mousedown", function (e) {
+        var btn = e.target.closest("button");
+        if (!btn || !dialog.contains(btn)) return;
+        if (btn.closest(".post-toolbar, .post-lead-bar")) e.preventDefault();
         if (window.dandelionClick) window.dandelionClick();
       });
-    });
+    }
 
     document.querySelectorAll("[data-fmt]").forEach(function (btn) {
       btn.addEventListener("click", function () {
