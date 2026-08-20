@@ -3,7 +3,7 @@
 }
 
 :root {
-  --site-cursor: url("../assets/icons/cursor.png") 0 0, auto;
+  --site-cursor: url("../assets/icons/cursor.png?v=41") 0 0, auto;
 }
 
 html,
@@ -267,19 +267,21 @@ button {
 .lang-menu-clip {
   position: absolute;
   right: 64px;
-  top: 0;
-  height: 64px;
+  top: 50%;
+  transform: translateY(-50%);
   overflow: hidden;
   display: flex;
   align-items: center;
+  padding: 6px 10px;
 }
 
 .lang-btn {
-  width: 40px;
-  height: 24px;
+  width: 80px;
+  height: 61px;
   padding: 0;
   border: 0;
   background: transparent;
+  flex-shrink: 0;
   cursor: var(--site-cursor);
 }
 
@@ -287,7 +289,7 @@ button {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: fill;
   image-rendering: pixelated;
 }
 
