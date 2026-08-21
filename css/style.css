@@ -1389,7 +1389,7 @@ body[data-list-kind] .feed-more {
 
 .proj-preview-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 12px;
   margin-top: 8px;
 }
