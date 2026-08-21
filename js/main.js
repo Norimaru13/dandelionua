@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
       "button, a[href], summary, .side-slot, .proj-chip, .post-swatch, .rgb-pick, [role=button], input[type=checkbox], input[type=radio], input[type=file], input[type=submit], input[type=button]"
     );
     if (!hit) return;
+    if (hit.closest(".footer-flower")) return;
     if (hit.closest("[contenteditable=true], textarea, input[type=text], input[type=password], input[type=url], input[type=search]")) return;
     window.dandelionClick();
   }, true);
@@ -216,14 +217,26 @@ document.addEventListener("DOMContentLoaded", function () {
     "assets/icons/golden_poppy.png"
   ];
   var flowerBtn = document.querySelector("[data-footer-flower]");
-  var flowerImg = flowerBtn ? flowerBtn.querySelector("img") : null;
-  var flowerIndex = 0;
+  var flowerIndex = -1;
   var flowerStreak = 0;
   var flowerLast = 0;
   var flowerEggTimer = 0;
   var flowerEggAudio = null;
-  var FLOWER_BTN = 32;
+  var FLOWER_BTN = 18;
   var FLOWER_MAX = FLOWER_BTN * 3;
+
+  function paintFlowerBtn() {
+    if (!flowerBtn) return;
+    if (flowerIndex < 0) {
+      flowerBtn.textContent = t("footer_flower");
+      return;
+    }
+    flowerBtn.textContent = "";
+    var img = document.createElement("img");
+    img.src = flowerSrcs[flowerIndex];
+    img.alt = "";
+    flowerBtn.appendChild(img);
+  }
 
   function clearFlowerEgg() {
     window.clearTimeout(flowerEggTimer);
@@ -277,10 +290,10 @@ document.addEventListener("DOMContentLoaded", function () {
     flowerEggTimer = window.setTimeout(clearFlowerEgg, 6000);
   }
 
-  if (flowerBtn && flowerImg) {
+  if (flowerBtn) {
     flowerBtn.addEventListener("click", function () {
       flowerIndex = (flowerIndex + 1) % flowerSrcs.length;
-      flowerImg.src = flowerSrcs[flowerIndex];
+      paintFlowerBtn();
       var now = Date.now();
       if (flowerLast && now - flowerLast > 400) flowerStreak = 1;
       else flowerStreak += 1;
@@ -291,4 +304,12 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+  var prevI18n = window.applyI18n;
+  if (typeof prevI18n === "function") {
+    window.applyI18n = function () {
+      prevI18n();
+      paintFlowerBtn();
+    };
+  }
+  paintFlowerBtn();
 });

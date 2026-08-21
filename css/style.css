@@ -550,21 +550,32 @@ button {
   margin: 0;
 }
 
-.footer-flower {
-  width: 32px;
-  height: 32px;
+.footer-flower,
+.footer-flower:hover,
+.footer-flower:focus,
+.footer-flower:active {
+  display: inline;
+  width: auto;
+  height: auto;
+  margin: 0;
   padding: 0;
   border: 0;
   background: transparent;
-  flex-shrink: 0;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+  cursor: var(--site-cursor);
+  outline: none;
 }
 
 .footer-flower img {
-  display: block;
-  width: 32px;
-  height: 32px;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
   object-fit: contain;
   image-rendering: pixelated;
+  vertical-align: baseline;
 }
 
 .flower-burst {
