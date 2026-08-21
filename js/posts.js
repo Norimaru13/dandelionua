@@ -928,6 +928,13 @@
       var article = document.createElement("article");
       article.className = "post";
       article.setAttribute("data-post-id", post.id);
+      if (admin && post.draft) {
+        article.classList.add("post-is-draft");
+        var mark = document.createElement("p");
+        mark.className = "post-draft";
+        mark.textContent = t("post_draft");
+        article.appendChild(mark);
+      }
 
       if (admin) {
         var tools = document.createElement("div");
@@ -999,13 +1006,6 @@
         var h = document.createElement("h2");
         h.className = "post-title";
         h.textContent = title;
-        if (admin && post.draft) {
-          var mark = document.createElement("span");
-          mark.className = "post-draft";
-          mark.textContent = t("post_draft");
-          h.appendChild(document.createTextNode(" "));
-          h.appendChild(mark);
-        }
         host.appendChild(h);
       }
       if (lead) {
@@ -1808,7 +1808,7 @@
     var saveBtn = $("[data-post-save]");
     if (saveBtn) {
       saveBtn.addEventListener("click", function () {
-        savePost(true, false);
+        savePost(true, true);
       });
     }
     var closeAsk = $("[data-close-modal]");

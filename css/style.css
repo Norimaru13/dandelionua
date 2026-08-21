@@ -1677,14 +1677,17 @@ body[data-list-kind] .feed-more {
   background: #7d8bb8;
 }
 
+.post-is-draft {
+  outline: 2px dashed #eebd3b;
+  outline-offset: 2px;
+}
+
 .post-draft {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 0 8px;
-  background: #7d8bb8;
-  color: #eaf4fc;
-  font-size: 14px;
-  vertical-align: middle;
+  margin: 0 0 8px;
+  padding: 4px 10px;
+  background: #eebd3b;
+  color: #28402f;
+  font-size: 16px;
 }
 
 @media (max-width: 720px) {
