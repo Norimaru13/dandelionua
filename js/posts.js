@@ -81,8 +81,11 @@
 
   function filteredPosts(list) {
     var kind = activeKind();
+    var admin = isAdmin();
     var out = (list || []).filter(function (post) {
-      return postKind(post) === kind;
+      if (postKind(post) !== kind) return false;
+      if (post.draft && !admin) return false;
+      return true;
     });
     if (pageKind()) return out;
     return out.slice(0, 3);
@@ -807,19 +810,30 @@
     syncRgbPreview();
   }
 
+  function syncSubmitLabel() {
+    var btn = $("[data-post-submit]");
+    if (!btn) return;
+    var key = editingId ? "post_edit" : "post_publish";
+    btn.setAttribute("data-i18n", key);
+    btn.textContent = t(key);
+  }
+
   function openPostModal() {
     var modal = $("[data-post-modal]");
     if (!modal) return;
     window.clearTimeout(closeTimer);
     modal.hidden = false;
     setPostError("");
+    syncSubmitLabel();
     if (typeof window.applyI18n === "function") applyI18n();
+    syncSubmitLabel();
     window.requestAnimationFrame(function () {
       modal.classList.add("is-open");
     });
   }
 
   function forceClosePostModal() {
+    hideCloseAsk();
     var modal = $("[data-post-modal]");
     if (modal) {
       modal.classList.remove("is-open");
@@ -864,9 +878,26 @@
   }
 
   function requestClose() {
-    askConfirm(t("post_close_confirm"), function () {
+    var box = $("[data-close-modal]");
+    if (!box) {
       forceClosePostModal();
+      return;
+    }
+    window.clearTimeout(confirmTimer);
+    box.hidden = false;
+    if (typeof window.applyI18n === "function") applyI18n();
+    window.requestAnimationFrame(function () {
+      box.classList.add("is-open");
     });
+  }
+
+  function hideCloseAsk() {
+    var box = $("[data-close-modal]");
+    if (!box) return;
+    box.classList.remove("is-open");
+    confirmTimer = window.setTimeout(function () {
+      box.hidden = true;
+    }, 280);
   }
 
   function heartSvg() {
@@ -968,6 +999,13 @@
         var h = document.createElement("h2");
         h.className = "post-title";
         h.textContent = title;
+        if (admin && post.draft) {
+          var mark = document.createElement("span");
+          mark.className = "post-draft";
+          mark.textContent = t("post_draft");
+          h.appendChild(document.createTextNode(" "));
+          h.appendChild(mark);
+        }
         host.appendChild(h);
       }
       if (lead) {
@@ -1070,6 +1108,7 @@
   function recordViews(list) {
     var visitor = visitorId();
     list.forEach(function (post) {
+      if (post.draft) return;
       rpc("record_post_view", { p_post: post.id, p_visitor: visitor })
         .then(function (data) {
           if (!data || !data.ok) return;
@@ -1453,9 +1492,9 @@
     reader.readAsDataURL(file);
   }
 
-  function submitPost(e) {
-    e.preventDefault();
-    var form = e.target;
+  function savePost(asDraft, closeAfter) {
+    var form = $("[data-post-form]");
+    if (!form) return;
     var auth = token();
     if (!auth) {
       setPostError("auth");
@@ -1483,12 +1522,17 @@
       p_kind: kind,
       p_lead_en: leadEn,
       p_lead_ua: leadUa,
-      p_meta: meta
+      p_meta: meta,
+      p_draft: Boolean(asDraft)
     };
     if (previewPhoto) payload.p_preview = previewPhoto;
     if (editingId) payload.p_id = editingId;
     var name = editingId ? "update_post" : "create_post";
     rpc(name, payload)
+      .catch(function () {
+        delete payload.p_draft;
+        return rpc(name, payload);
+      })
       .catch(function () {
         delete payload.p_preview;
         delete payload.p_meta;
@@ -1508,12 +1552,19 @@
           setPostError((data && data.error) || "fail");
           return;
         }
-        forceClosePostModal();
+        if (data.id) editingId = data.id;
+        syncSubmitLabel();
         loadPosts();
+        if (closeAfter) forceClosePostModal();
       })
       .catch(function (err) {
         setPostError((err && err.error) || "fail");
       });
+  }
+
+  function submitPost(e) {
+    e.preventDefault();
+    savePost(false, true);
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -1754,6 +1805,32 @@
     }
     if (closeBtn) closeBtn.addEventListener("click", requestClose);
     if (form) form.addEventListener("submit", submitPost);
+    var saveBtn = $("[data-post-save]");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        savePost(true, false);
+      });
+    }
+    var closeAsk = $("[data-close-modal]");
+    var closeDiscard = $("[data-close-discard]");
+    var closeSave = $("[data-close-save]");
+    if (closeDiscard) {
+      closeDiscard.addEventListener("click", function () {
+        hideCloseAsk();
+        forceClosePostModal();
+      });
+    }
+    if (closeSave) {
+      closeSave.addEventListener("click", function () {
+        hideCloseAsk();
+        savePost(true, true);
+      });
+    }
+    if (closeAsk) {
+      closeAsk.addEventListener("click", function (e) {
+        if (e.target === closeAsk) hideCloseAsk();
+      });
+    }
 
     if (confirmBox) {
       var yes = $("[data-confirm-yes]");
@@ -1777,6 +1854,7 @@
     if (typeof prev === "function") {
       window.applyI18n = function () {
         prev();
+        syncSubmitLabel();
         loadPosts();
       };
     }

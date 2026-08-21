@@ -1673,6 +1673,20 @@ body[data-list-kind] .feed-more {
   font: inherit;
 }
 
+[data-post-save] {
+  background: #7d8bb8;
+}
+
+.post-draft {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 0 8px;
+  background: #7d8bb8;
+  color: #eaf4fc;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
 @media (max-width: 720px) {
   .sidebar {
     display: none;
