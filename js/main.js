@@ -299,7 +299,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var footLock = "1b216ed9392903d591d7e3c4c23fb7075260e1448d187be06b0c6f63e90e0739";
   var footPack = "cbbbbe67e8acd3654059c31540ef02d7e3b05468adc8c730d5dde0433994d781caa7bf55e993d365";
 
-  function footGlyph(e) {
+  function footGlyph(e, host) {
     var node = null;
     var off = 0;
     if (document.caretPositionFromPoint) {
@@ -315,9 +315,27 @@ document.addEventListener("DOMContentLoaded", function () {
         off = range.startOffset;
       }
     }
-    if (!node || node.nodeType !== 3) return "";
-    var text = node.nodeValue || "";
-    return (off > 0 ? text.charAt(off - 1) : "") + (off < text.length ? text.charAt(off) : "");
+    if (!node || node.nodeType !== 3) return { text: "", off: 0, ok: false };
+    if (host && !host.contains(node)) return { text: "", off: 0, ok: false };
+    return { text: node.nodeValue || "", off: off, ok: true };
+  }
+
+  function footLetters(e) {
+    var g = footGlyph(e, footLine);
+    if (!g.ok) return "";
+    return (g.off > 0 ? g.text.charAt(g.off - 1) : "") + (g.off < g.text.length ? g.text.charAt(g.off) : "");
+  }
+
+  function hitWordChar(e, host, word, ch) {
+    var g = footGlyph(e, host);
+    if (!g.ok) return false;
+    var idx = -1;
+    if (g.off > 0 && g.text.charAt(g.off - 1) === ch) idx = g.off - 1;
+    else if (g.text.charAt(g.off) === ch) idx = g.off;
+    if (idx < 0) return false;
+    var at = word.indexOf(ch);
+    if (at < 0 || idx < at) return false;
+    return g.text.substr(idx - at, word.length) === word;
   }
 
   function footHex(buf) {
@@ -379,7 +397,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (footLine) {
     footLine.addEventListener("click", function (e) {
-      if (!/[mMмМ]/.test(footGlyph(e))) {
+      if (!/[mMмМ]/.test(footLetters(e))) {
         footHits = 0;
         return;
       }
@@ -387,9 +405,50 @@ document.addEventListener("DOMContentLoaded", function () {
       if (footHitAt && now - footHitAt > 500) footHits = 1;
       else footHits += 1;
       footHitAt = now;
-      if (footHits >= 3) {
+      if (footHits >= 5) {
         footHits = 0;
         footOpen();
+      }
+    });
+  }
+
+  var introLine = (!document.body.getAttribute("data-list-kind") && document.body.getAttribute("data-page") !== "project")
+    ? document.querySelector(".intro")
+    : null;
+  var introHits = 0;
+  var introHitAt = 0;
+  var introBox = null;
+
+  function introClose() {
+    if (introBox && introBox.parentNode) introBox.parentNode.removeChild(introBox);
+    introBox = null;
+  }
+
+  function introOpen() {
+    if (introBox) return;
+    introBox = document.createElement("div");
+    introBox.className = "site-dim";
+    var pic = document.createElement("img");
+    pic.src = "assets/H.png";
+    pic.alt = "";
+    introBox.appendChild(pic);
+    introBox.addEventListener("click", introClose);
+    document.body.appendChild(introBox);
+  }
+
+  if (introLine) {
+    introLine.addEventListener("click", function (e) {
+      if (!hitWordChar(e, introLine, "дрібних", "н")) {
+        introHits = 0;
+        return;
+      }
+      var now = Date.now();
+      if (introHitAt && now - introHitAt > 500) introHits = 1;
+      else introHits += 1;
+      introHitAt = now;
+      if (introHits >= 3) {
+        introHits = 0;
+        introOpen();
       }
     });
   }
@@ -402,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var caveWait = 0;
 
   function caveDelay() {
-    return 15000 + Math.random() * 25000;
+    return 30000 + Math.random() * 30000;
   }
 
   function scheduleCave() {

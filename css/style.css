@@ -593,6 +593,24 @@ button {
   transform: translate(-50%, -50%);
 }
 
+.site-dim {
+  position: fixed;
+  inset: 0;
+  z-index: 190;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 16, 12, 0.78);
+  backdrop-filter: blur(12px);
+  cursor: var(--site-cursor);
+}
+
+.site-dim img {
+  max-width: min(520px, 82vw);
+  max-height: 82vh;
+  object-fit: contain;
+}
+
 .header-tools {
   position: relative;
   z-index: 4;
