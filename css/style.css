@@ -1587,8 +1587,8 @@ body[data-list-kind] .feed-more {
   min-width: 100%;
   max-width: 280px;
   padding: 8px 10px;
-  background: #eaf4fc;
-  color: #28402f;
+  background: #375942;
+  color: #77bf8c;
   outline: 2px solid #28402f;
   font-size: 14px;
   line-height: 1.3;
@@ -1650,10 +1650,14 @@ body[data-list-kind] .feed-more {
   white-space: nowrap;
 }
 
-.post-react .like-btn.is-disliked svg,
-.comment-vote.is-disliked svg {
+.post-react .like-btn.is-disliked svg {
   fill: #28402f;
   stroke: #28402f;
+}
+
+.comment-vote.is-disliked svg {
+  fill: #96a5d5;
+  stroke: #96a5d5;
 }
 
 .comment-modal .post-dialog {
@@ -1675,7 +1679,8 @@ body[data-list-kind] .feed-more {
 .comment-item {
   padding: 8px 10px;
   border: 2px solid #28402f;
-  background: #eaf4fc;
+  background: #8491bd;
+  color: #96a5d5;
 }
 
 .comment-head {
@@ -1704,7 +1709,7 @@ body[data-list-kind] .feed-more {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #28402f;
+  color: #96a5d5;
   font: inherit;
   font-size: 15px;
   text-decoration: underline;
@@ -1724,7 +1729,7 @@ body[data-list-kind] .feed-more {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #28402f;
+  color: #96a5d5;
   font: inherit;
 }
 
@@ -1732,7 +1737,7 @@ body[data-list-kind] .feed-more {
   width: 18px;
   height: 18px;
   fill: none;
-  stroke: #28402f;
+  stroke: #96a5d5;
   stroke-width: 1.6;
 }
 
