@@ -550,32 +550,21 @@ button {
   margin: 0;
 }
 
-.footer-flower,
-.footer-flower:hover,
-.footer-flower:focus,
-.footer-flower:active {
-  display: inline;
-  width: auto;
-  height: auto;
-  margin: 0;
+.footer-flower {
+  width: 32px;
+  height: 32px;
   padding: 0;
   border: 0;
   background: transparent;
-  color: inherit;
-  font: inherit;
-  line-height: inherit;
-  vertical-align: baseline;
-  cursor: var(--site-cursor);
-  outline: none;
+  flex-shrink: 0;
 }
 
 .footer-flower img {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
+  display: block;
+  width: 32px;
+  height: 32px;
   object-fit: contain;
   image-rendering: pixelated;
-  vertical-align: baseline;
 }
 
 .flower-burst {
@@ -2103,6 +2092,21 @@ body[data-list-kind] .feed-more {
 .confirm-dialog p {
   margin: 0 0 16px;
   font-size: 18px;
+}
+
+.confirm-dialog input {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0 0 12px;
+  padding: 8px;
+  border: 2px solid #28402f;
+  background: #eaf4fc;
+  color: #28402f;
+  font: inherit;
+}
+
+.confirm-dialog .mark {
+  pointer-events: none;
 }
 
 .confirm-actions {

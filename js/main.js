@@ -17,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function () {
       "button, a[href], summary, .side-slot, .proj-chip, .post-swatch, .rgb-pick, [role=button], input[type=checkbox], input[type=radio], input[type=file], input[type=submit], input[type=button]"
     );
     if (!hit) return;
-    if (hit.closest(".footer-flower")) return;
     if (hit.closest("[contenteditable=true], textarea, input[type=text], input[type=password], input[type=url], input[type=search]")) return;
     window.dandelionClick();
   }, true);
@@ -217,26 +216,14 @@ document.addEventListener("DOMContentLoaded", function () {
     "assets/icons/golden_poppy.png"
   ];
   var flowerBtn = document.querySelector("[data-footer-flower]");
-  var flowerIndex = -1;
+  var flowerImg = flowerBtn ? flowerBtn.querySelector("img") : null;
+  var flowerIndex = 0;
   var flowerStreak = 0;
   var flowerLast = 0;
   var flowerEggTimer = 0;
   var flowerEggAudio = null;
-  var FLOWER_BTN = 18;
+  var FLOWER_BTN = 32;
   var FLOWER_MAX = FLOWER_BTN * 3;
-
-  function paintFlowerBtn() {
-    if (!flowerBtn) return;
-    if (flowerIndex < 0) {
-      flowerBtn.textContent = t("footer_flower");
-      return;
-    }
-    flowerBtn.textContent = "";
-    var img = document.createElement("img");
-    img.src = flowerSrcs[flowerIndex];
-    img.alt = "";
-    flowerBtn.appendChild(img);
-  }
 
   function clearFlowerEgg() {
     window.clearTimeout(flowerEggTimer);
@@ -290,10 +277,10 @@ document.addEventListener("DOMContentLoaded", function () {
     flowerEggTimer = window.setTimeout(clearFlowerEgg, 6000);
   }
 
-  if (flowerBtn) {
+  if (flowerBtn && flowerImg) {
     flowerBtn.addEventListener("click", function () {
       flowerIndex = (flowerIndex + 1) % flowerSrcs.length;
-      paintFlowerBtn();
+      flowerImg.src = flowerSrcs[flowerIndex];
       var now = Date.now();
       if (flowerLast && now - flowerLast > 400) flowerStreak = 1;
       else flowerStreak += 1;
@@ -304,12 +291,106 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
-  var prevI18n = window.applyI18n;
-  if (typeof prevI18n === "function") {
-    window.applyI18n = function () {
-      prevI18n();
-      paintFlowerBtn();
-    };
+
+  var footLine = document.querySelector(".site-footer p");
+  var footHits = 0;
+  var footHitAt = 0;
+  var footBox = null;
+  var footLock = "1b216ed9392903d591d7e3c4c23fb7075260e1448d187be06b0c6f63e90e0739";
+  var footPack = "cbbbbe67e8acd3654059c31540ef02d7e3b05468adc8c730d5dde0433994d781caa7bf55e993d365";
+
+  function footGlyph(e) {
+    var node = null;
+    var off = 0;
+    if (document.caretPositionFromPoint) {
+      var pos = document.caretPositionFromPoint(e.clientX, e.clientY);
+      if (pos) {
+        node = pos.offsetNode;
+        off = pos.offset;
+      }
+    } else if (document.caretRangeFromPoint) {
+      var range = document.caretRangeFromPoint(e.clientX, e.clientY);
+      if (range) {
+        node = range.startContainer;
+        off = range.startOffset;
+      }
+    }
+    if (!node || node.nodeType !== 3) return "";
+    var text = node.nodeValue || "";
+    return (off > 0 ? text.charAt(off - 1) : "") + (off < text.length ? text.charAt(off) : "");
   }
-  paintFlowerBtn();
+
+  function footHex(buf) {
+    var u8 = new Uint8Array(buf);
+    var out = "";
+    var i;
+    for (i = 0; i < u8.length; i += 1) out += ("0" + u8[i].toString(16)).slice(-2);
+    return out;
+  }
+
+  function footOpen() {
+    if (footBox) return;
+    footBox = document.createElement("div");
+    footBox.className = "confirm-modal is-open";
+    footBox.innerHTML =
+      '<div class="confirm-dialog">' +
+        '<input type="text" autocomplete="off" spellcheck="false">' +
+        '<div class="confirm-actions">' +
+          '<button type="button"><img class="mark" src="assets/icons/yes_icon.png" alt=""></button>' +
+        "</div>" +
+      "</div>";
+    var field = footBox.querySelector("input");
+    var ok = footBox.querySelector("button");
+    function footTry() {
+      var raw = field.value || "";
+      if (!window.crypto || !crypto.subtle) return;
+      crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw)).then(function (buf) {
+        if (footHex(buf) !== footLock) return;
+        var key = new Uint8Array(buf);
+        var msg = [];
+        var i;
+        for (i = 0; i < footPack.length; i += 2) {
+          msg.push(parseInt(footPack.substr(i, 2), 16) ^ key[(i / 2) % key.length]);
+        }
+        var line = new TextDecoder().decode(new Uint8Array(msg));
+        var pane = footBox.querySelector(".confirm-dialog");
+        pane.innerHTML = "<p></p><p>\u2665</p>";
+        pane.querySelector("p").textContent = line;
+      });
+    }
+    ok.addEventListener("click", footTry);
+    field.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        footTry();
+      }
+    });
+    footBox.addEventListener("click", function (e) {
+      if (e.target === footBox) {
+        if (footBox.parentNode) footBox.parentNode.removeChild(footBox);
+        footBox = null;
+      }
+    });
+    document.body.appendChild(footBox);
+    window.requestAnimationFrame(function () {
+      field.focus();
+    });
+  }
+
+  if (footLine) {
+    footLine.addEventListener("click", function (e) {
+      if (!/[mMмМ]/.test(footGlyph(e))) {
+        footHits = 0;
+        return;
+      }
+      var now = Date.now();
+      if (footHitAt && now - footHitAt > 500) footHits = 1;
+      else footHits += 1;
+      footHitAt = now;
+      if (footHits >= 3) {
+        footHits = 0;
+        footOpen();
+      }
+    });
+  }
 });
