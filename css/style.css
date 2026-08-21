@@ -1028,6 +1028,19 @@ body[data-list-kind] .feed-more {
   order: 0;
 }
 
+.post-form.is-editing .post-kind-tabs {
+  display: none;
+}
+
+.post-form.is-live-view .proj-chip,
+.post-form.is-live-view .post-tool,
+.post-form.is-live-view .post-swatch,
+.post-form.is-live-view .rgb-pick,
+.post-form.is-live-view .rgb-slider {
+  pointer-events: none;
+  opacity: 0.65;
+}
+
 .post-form > [data-title-en],
 .post-form > [data-title-ua] {
   order: 1;
@@ -1688,6 +1701,42 @@ body[data-list-kind] .feed-more {
   background: #eebd3b;
   color: #28402f;
   font-size: 16px;
+}
+
+.post-is-pending {
+  outline: 2px dashed #67a77a;
+  outline-offset: 2px;
+}
+
+.post-pending {
+  margin: 0 0 8px;
+  padding: 4px 10px;
+  background: #67a77a;
+  color: #eaf4fc;
+  font-size: 16px;
+}
+
+.post-eye {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  background: #7d8bb8;
+  color: #eaf4fc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-eye svg {
+  width: 22px;
+  height: 22px;
+}
+
+.post-eye.is-on {
+  background: #6371af;
+  outline: 2px solid #28402f;
+  outline-offset: -2px;
 }
 
 @media (max-width: 720px) {

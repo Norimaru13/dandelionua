@@ -6,6 +6,11 @@
   var MAX_BYTES = 600000;
   var VISITOR_KEY = "dandelion-visitor";
   var editingId = null;
+  var editingWasDraft = false;
+  var viewingLive = false;
+  var liveSnapshot = null;
+  var workSnapshot = null;
+  var noticeLock = false;
   var lastPosts = [];
   var feedKind = "project";
   var savedRange = null;
@@ -78,6 +83,20 @@
     if (post.draft === true || post.draft === 1 || post.draft === "t" || post.draft === "true") return true;
     var meta = postMeta(post);
     return meta.draft === true || meta.draft === 1 || meta.draft === "true";
+  }
+
+  function parsePending(post) {
+    var raw = post && post.pending;
+    if (typeof raw === "string") {
+      try { raw = JSON.parse(raw); } catch (e) { return null; }
+    }
+    if (!raw || typeof raw !== "object") return null;
+    if (!Object.keys(raw).length) return null;
+    return raw;
+  }
+
+  function isPendingPost(post) {
+    return Boolean(post && !isDraftPost(post) && parsePending(post));
   }
 
   function formatWhen(iso) {
@@ -469,6 +488,10 @@
   }
 
   function applyFmt(cmd, val) {
+    if (viewingLive) {
+      askNotice(t("post_eye_lock"));
+      return;
+    }
     skipFmtSync = true;
     restoreSel();
     if (cmd === "foreColor") {
@@ -808,9 +831,118 @@
     return el.innerHTML.replace(/\n/g, "<br>");
   }
 
+  function formSnapshot() {
+    var form = $("[data-post-form]");
+    var kind = formKind();
+    var packed = kind === "publication" ? packBodies() : { photos: [], bodyEn: "", bodyUa: "" };
+    var meta = kind === "project" ? readMeta() : {};
+    delete meta.draft;
+    var snap = {
+      kind: kind,
+      title_en: form && form.title_en ? form.title_en.value : "",
+      title_ua: form && form.title_ua ? form.title_ua.value : "",
+      lead_en: readLead("en"),
+      lead_ua: readLead("ua"),
+      body_en: packed.bodyEn,
+      body_ua: packed.bodyUa,
+      photos: packed.photos,
+      meta: meta
+    };
+    if (previewPhoto && previewPhoto.data) {
+      snap.preview_mime = previewPhoto.mime;
+      snap.preview_data = previewPhoto.data;
+    }
+    return snap;
+  }
+
+  function fillFormFrom(data) {
+    var form = $("[data-post-form]");
+    if (!form || !data) return;
+    form.kind.value = postKind(data);
+    if (form.title_en) form.title_en.value = data.title_en || "";
+    if (form.title_ua) form.title_ua.value = data.title_ua || "";
+    fillLeads(data);
+    fillEditors(data);
+    writeMeta(postMeta(data));
+    setPreview(data.preview_data && data.preview_mime
+      ? { mime: data.preview_mime, data: data.preview_data }
+      : null);
+    syncFormKind();
+  }
+
+  function postToLiveSnap(post) {
+    return {
+      kind: postKind(post),
+      title_en: post.title_en || "",
+      title_ua: post.title_ua || "",
+      lead_en: post.lead_en || "",
+      lead_ua: post.lead_ua || "",
+      body_en: post.body_en || "",
+      body_ua: post.body_ua || "",
+      photos: post.photos || [],
+      meta: postMeta(post),
+      preview_mime: post.preview_mime || "",
+      preview_data: post.preview_data || ""
+    };
+  }
+
+  function setLivePreview(on) {
+    var form = $("[data-post-form]");
+    var eye = $("[data-post-eye]");
+    if (on && !viewingLive) workSnapshot = formSnapshot();
+    if (!on && viewingLive && workSnapshot) fillFormFrom(workSnapshot);
+    if (on && liveSnapshot) fillFormFrom(liveSnapshot);
+    viewingLive = Boolean(on);
+    if (form) form.classList.toggle("is-live-view", viewingLive);
+    if (eye) {
+      eye.classList.toggle("is-on", viewingLive);
+      eye.setAttribute("aria-pressed", viewingLive ? "true" : "false");
+    }
+    ["en", "ua"].forEach(function (lang) {
+      var lead = $('[data-lead="' + lang + '"]');
+      var box = editor(lang);
+      if (lead) lead.setAttribute("contenteditable", viewingLive ? "false" : "true");
+      if (box) box.setAttribute("contenteditable", viewingLive ? "false" : "true");
+    });
+    if (form) {
+      ["title_en", "title_ua"].forEach(function (name) {
+        if (form[name]) form[name].readOnly = viewingLive;
+      });
+    }
+  }
+
+  function syncEyeButton() {
+    var eye = $("[data-post-eye]");
+    if (!eye) return;
+    var show = Boolean(editingId && !editingWasDraft);
+    eye.hidden = !show;
+    if (!show) setLivePreview(false);
+  }
+
+  function syncKindLock() {
+    var form = $("[data-post-form]");
+    if (form) form.classList.toggle("is-editing", Boolean(editingId));
+  }
+
+  function guardLiveView(e) {
+    if (!viewingLive) return;
+    var el = e.target;
+    if (el && el.closest && el.closest("[data-post-eye], [data-post-lang], [data-post-close], .account-close, [data-post-save], [data-post-submit], [data-close-modal], [data-confirm-modal]")) return;
+    if (e.cancelable) e.preventDefault();
+    e.stopPropagation();
+    askNotice(t("post_eye_lock"));
+  }
+
   function resetEditor() {
     var form = $("[data-post-form]");
-    if (form) form.reset();
+    viewingLive = false;
+    liveSnapshot = null;
+    workSnapshot = null;
+    editingWasDraft = false;
+    if (form) {
+      form.reset();
+      form.classList.remove("is-live-view", "is-editing");
+    }
     fillEditors(null);
     fillLeads(null);
     lastEdit = null;
@@ -823,6 +955,9 @@
     setPickerOpen(false);
     setLinkOpen(false);
     syncRgbPreview();
+    setLivePreview(false);
+    syncEyeButton();
+    syncKindLock();
   }
 
   function syncSubmitLabel() {
@@ -842,6 +977,8 @@
     syncSubmitLabel();
     if (typeof window.applyI18n === "function") applyI18n();
     syncSubmitLabel();
+    syncKindLock();
+    syncEyeButton();
     window.requestAnimationFrame(function () {
       modal.classList.add("is-open");
     });
@@ -881,8 +1018,21 @@
     });
   }
 
+  function askNotice(message) {
+    if (noticeLock) return;
+    noticeLock = true;
+    var no = $("[data-confirm-no]");
+    if (no) no.hidden = true;
+    askConfirm(message, function () {
+      noticeLock = false;
+    });
+  }
+
   function hideConfirm() {
     var box = $("[data-confirm-modal]");
+    var no = $("[data-confirm-no]");
+    if (no) no.hidden = false;
+    noticeLock = false;
     if (box) {
       box.classList.remove("is-open");
       confirmTimer = window.setTimeout(function () {
@@ -949,6 +1099,12 @@
         mark.className = "post-draft";
         mark.textContent = t("post_draft");
         article.appendChild(mark);
+      } else if (admin && isPendingPost(post)) {
+        article.classList.add("post-is-pending");
+        var pend = document.createElement("p");
+        pend.className = "post-pending";
+        pend.textContent = t("post_pending");
+        article.appendChild(pend);
       }
 
       if (admin) {
@@ -1161,18 +1317,16 @@
     var form = $("[data-post-form]");
     if (!form) return;
     editingId = post.id;
-    form.kind.value = postKind(post);
-    form.title_en.value = post.title_en || "";
-    form.title_ua.value = post.title_ua || "";
-    fillLeads(post);
-    fillEditors(post);
-    writeMeta(typeof post.meta === "string" ? (function () { try { return JSON.parse(post.meta); } catch (e) { return {}; } })() : (post.meta || {}));
-    setPreview(post.preview_data && post.preview_mime
-      ? { mime: post.preview_mime, data: post.preview_data }
-      : null);
+    editingWasDraft = isDraftPost(post);
+    liveSnapshot = postToLiveSnap(post);
+    workSnapshot = parsePending(post);
+    viewingLive = false;
+    fillFormFrom(workSnapshot || liveSnapshot);
     setPostLang(typeof getLang === "function" && getLang() === "ua" ? "ua" : "en");
-    syncFormKind();
+    syncKindLock();
     openPostModal();
+    setLivePreview(false);
+    syncEyeButton();
   }
 
   function askDelete(postId) {
@@ -1473,6 +1627,10 @@
   }
 
   function insertPhoto(file) {
+    if (viewingLive) {
+      askNotice(t("post_eye_lock"));
+      return;
+    }
     if (!file) return;
     if (file.size > MAX_BYTES) {
       setPostError("photo_big");
@@ -1510,6 +1668,7 @@
   function savePost(asDraft, closeAfter) {
     var form = $("[data-post-form]");
     if (!form) return;
+    if (viewingLive) setLivePreview(false);
     var auth = token();
     if (!auth) {
       setPostError("auth");
@@ -1526,7 +1685,8 @@
     }
     var packed = kind === "publication" ? packBodies() : { photos: [], bodyEn: "", bodyUa: "" };
     var meta = kind === "project" ? readMeta() : {};
-    meta.draft = Boolean(asDraft);
+    var publishedEdit = Boolean(editingId && !editingWasDraft);
+    meta.draft = Boolean(asDraft && !publishedEdit);
     setPostError("");
     var payload = {
       p_token: auth,
@@ -1539,12 +1699,18 @@
       p_lead_en: leadEn,
       p_lead_ua: leadUa,
       p_meta: meta,
-      p_draft: Boolean(asDraft)
+      p_draft: Boolean(asDraft && !publishedEdit)
     };
     if (previewPhoto) payload.p_preview = previewPhoto;
     if (editingId) payload.p_id = editingId;
+    if (asDraft && publishedEdit) payload.p_pending = formSnapshot();
+    else if (editingId) payload.p_pending = null;
     var name = editingId ? "update_post" : "create_post";
     rpc(name, payload)
+      .catch(function () {
+        delete payload.p_pending;
+        return rpc(name, payload);
+      })
       .catch(function () {
         delete payload.p_draft;
         return rpc(name, payload);
@@ -1697,6 +1863,7 @@
 
     document.querySelectorAll("[data-post-kind]").forEach(function (btn) {
       btn.addEventListener("click", function () {
+        if (editingId) return;
         if (form && form.kind) form.kind.value = btn.getAttribute("data-post-kind");
         syncFormKind();
       });
@@ -1820,7 +1987,21 @@
       });
     }
     if (closeBtn) closeBtn.addEventListener("click", requestClose);
-    if (form) form.addEventListener("submit", submitPost);
+    if (form) {
+      form.addEventListener("submit", submitPost);
+      form.addEventListener("pointerdown", guardLiveView, true);
+      form.addEventListener("keydown", guardLiveView, true);
+      form.addEventListener("paste", guardLiveView, true);
+    }
+    var eyeBtn = $("[data-post-eye]");
+    if (eyeBtn) {
+      eyeBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!editingId || editingWasDraft) return;
+        setLivePreview(!viewingLive);
+      });
+    }
     var saveBtn = $("[data-post-save]");
     if (saveBtn) {
       saveBtn.addEventListener("click", function () {
