@@ -282,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function () {
       flowerIndex = (flowerIndex + 1) % flowerSrcs.length;
       flowerImg.src = flowerSrcs[flowerIndex];
       var now = Date.now();
-      if (flowerLast && now - flowerLast > 100) flowerStreak = 1;
+      if (flowerLast && now - flowerLast > 400) flowerStreak = 1;
       else flowerStreak += 1;
       flowerLast = now;
       if (flowerStreak >= 18) {
