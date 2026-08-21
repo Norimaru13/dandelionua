@@ -1498,6 +1498,10 @@ body[data-list-kind] .feed-more {
   background: #eaf4fc;
 }
 
+.post-is-project .post-preview-empty {
+  background: #375942;
+}
+
 .post-is-project .post-project-main {
   display: flex;
   flex-direction: column;
@@ -1598,13 +1602,21 @@ body[data-list-kind] .feed-more {
   visibility: visible;
 }
 
-.post-is-project .post-card-foot {
+.post-card-foot {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  height: 48px;
-  max-height: 48px;
   overflow: hidden;
   border-top: 2px solid #28402f;
+}
+
+.post-is-project .post-card-foot {
+  height: 48px;
+  max-height: 48px;
+}
+
+.post:not(.post-is-project) .post-card-foot {
+  margin: 12px -16px -16px;
+  min-height: 48px;
 }
 
 .post-card-comment {
@@ -1669,9 +1681,34 @@ body[data-list-kind] .feed-more {
 .comment-head {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 8px;
   margin-bottom: 6px;
   font-size: 15px;
+}
+
+.comment-times {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 2px;
+}
+
+.comment-edited {
+  font-size: 13px;
+}
+
+.comment-edit-btn {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #28402f;
+  font: inherit;
+  font-size: 15px;
+  text-decoration: underline;
+  cursor: var(--site-cursor-hover);
 }
 
 .comment-votes {

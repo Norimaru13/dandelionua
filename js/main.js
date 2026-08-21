@@ -13,8 +13,11 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (err) {}
   };
   document.addEventListener("click", function (e) {
-    if (e.target.closest(".post-dialog button")) return;
-    if (!e.target.closest("button, .side-slot, .page-nav-menu a, .proj-chip, .post-swatch, .rgb-pick")) return;
+    var hit = e.target.closest(
+      "button, a[href], summary, .side-slot, .proj-chip, .post-swatch, .rgb-pick, [role=button], input[type=checkbox], input[type=radio], input[type=file], input[type=submit], input[type=button]"
+    );
+    if (!hit) return;
+    if (hit.closest("[contenteditable=true], textarea, input[type=text], input[type=password], input[type=url], input[type=search]")) return;
     window.dandelionClick();
   }, true);
 

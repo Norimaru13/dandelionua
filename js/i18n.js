@@ -95,6 +95,7 @@ var translations = {
     post_write_comment: "write a comment",
     post_comments: "comments",
     post_comment_send: "send",
+    comment_edited: "edited",
     err_comment_auth: "log in to comment",
     err_comment_long: "max 300 characters"
   },
@@ -187,6 +188,7 @@ var translations = {
     post_write_comment: "написати коментар",
     post_comments: "коментарі",
     post_comment_send: "надіслати",
+    comment_edited: "редаговано",
     err_comment_auth: "увійди, щоб коментувати",
     err_comment_long: "максимум 300 символів"
   }
