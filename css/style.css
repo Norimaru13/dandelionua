@@ -1389,9 +1389,28 @@ body[data-list-kind] .feed-more {
 
 .proj-preview-row {
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 12px;
   margin-top: 8px;
+}
+
+.proj-preview-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-width: 0;
+  height: 72px;
+}
+
+.proj-preview-name {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  line-height: 1.2;
+  color: #28402f;
 }
 
 .proj-preview-sq {
@@ -1410,22 +1429,211 @@ body[data-list-kind] .feed-more {
 }
 
 .post-is-project {
-  display: flex;
-  gap: 16px;
-  align-items: flex-start;
-}
-
-.post-preview {
-  width: 120px;
-  height: 120px;
-  flex-shrink: 0;
-  object-fit: cover;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
   border: 2px solid #28402f;
 }
 
-.post-project-main {
-  flex: 1;
+.post-is-project .post-draft,
+.post-is-project .post-pending {
+  grid-column: 1 / -1;
+  margin: 0;
+  border-bottom: 2px solid #28402f;
+}
+
+.post-is-project .post-title {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 10px 14px;
+  border-bottom: 2px solid #28402f;
+  text-align: center;
+}
+
+.post-is-project .post-title a {
+  color: #28402f;
+  text-decoration: underline;
+}
+
+.post-is-project .post-preview,
+.post-is-project .post-preview-empty {
+  grid-column: 1;
+  grid-row: 2;
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  object-fit: cover;
+  border: 0;
+  border-right: 2px solid #28402f;
+  background: #eaf4fc;
+}
+
+.post-is-project .post-project-main {
+  grid-column: 2;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+  min-height: 140px;
+}
+
+.post-is-project .post-lead {
+  margin: 0;
+  padding: 10px 12px;
+  border-bottom: 2px solid #28402f;
+  flex: 1;
+}
+
+.post-is-project .post-meta {
+  margin: 0;
+  padding: 10px 12px;
+}
+
+.post-is-project .post-card-foot {
+  grid-column: 1 / -1;
+  grid-row: 3;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  border-top: 2px solid #28402f;
+}
+
+.post-card-comment {
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  background: transparent;
+  color: #28402f;
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+  cursor: var(--site-cursor-hover);
+}
+
+.post-card-comment-nick {
+  margin-right: 6px;
+}
+
+.post-card-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-left: 2px solid #28402f;
+}
+
+.post-react .like-btn.is-disliked svg,
+.comment-vote.is-disliked svg {
+  fill: #28402f;
+  stroke: #28402f;
+}
+
+.comment-modal .post-dialog {
+  max-width: 720px;
+  aspect-ratio: auto;
+  height: min(80vh, 720px);
+}
+
+.comment-list {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.comment-item {
+  padding: 8px 10px;
+  border: 2px solid #28402f;
+  background: #eaf4fc;
+}
+
+.comment-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 15px;
+}
+
+.comment-votes {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.comment-vote {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #28402f;
+  font: inherit;
+}
+
+.comment-vote svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #28402f;
+  stroke-width: 1.6;
+}
+
+.comment-vote.is-liked svg {
+  fill: #ffd700;
+  stroke: #ffd700;
+}
+
+.comment-compose {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.comment-edit {
+  min-height: 72px;
+  padding: 8px;
+  border: 2px solid #28402f;
+  background: #eaf4fc;
+  color: #28402f;
+  font: inherit;
+}
+
+.comment-compose-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.comment-count {
+  font-size: 15px;
+}
+
+.comment-compose-row button {
+  padding: 8px 12px;
+  border: 0;
+  background: #6371af;
+  color: #eaf4fc;
+  font: inherit;
+}
+
+.comment-modal .post-form {
+  overflow: hidden;
+}
+
+.project-page-title {
+  margin: 24px 0;
+  font-size: 28px;
+  font-weight: normal;
+  text-align: center;
 }
 
 .post-meta {

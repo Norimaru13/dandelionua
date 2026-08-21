@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=64">
+  <link rel="stylesheet" href="css/style.css?v=65">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -355,10 +355,13 @@
           </div>
           <div class="proj-preview-row">
             <div class="proj-preview-sq" data-preview-view></div>
-            <input class="post-photo-input" data-preview-input type="file" accept="image/jpeg,image/png,image/webp,image/gif">
-            <button type="button" class="post-tool post-tool-clip" data-preview-btn data-i18n-title="proj_preview">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 6.8v8.1a4.4 4.4 0 0 1-8.8 0V6.6a2.8 2.8 0 1 1 5.6 0v8.1a1.2 1.2 0 0 1-2.4 0V7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-            </button>
+            <div class="proj-preview-side">
+              <span class="proj-preview-name" data-preview-name></span>
+              <input class="post-photo-input" data-preview-input type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+              <button type="button" class="post-tool post-tool-clip" data-preview-btn data-i18n-title="proj_preview">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16.4 6.8v8.1a4.4 4.4 0 0 1-8.8 0V6.6a2.8 2.8 0 1 1 5.6 0v8.1a1.2 1.2 0 0 1-2.4 0V7.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         <div class="post-controls" data-pub-only>
@@ -419,6 +422,33 @@
       </div>
     </div>
   </div>
+  <div class="post-modal comment-modal" data-comment-modal hidden>
+    <div class="post-dialog">
+      <button type="button" class="account-close" data-comment-close data-i18n-title="account_close">
+        <img class="close-off" src="assets/icons/cross_button.png" alt="">
+        <img class="close-hover" src="assets/icons/cross_button_hovered.png" alt="">
+        <img class="close-press" src="assets/icons/cross_button_pressed.png" alt="">
+      </button>
+      <div class="post-form">
+        <p data-i18n="post_comments">comments</p>
+        <div class="comment-list" data-comment-list></div>
+        <div class="comment-compose">
+          <div class="post-lead-bar">
+            <button type="button" class="post-tool" data-fmt="bold" data-i18n-title="post_bold"><b>B</b></button>
+            <button type="button" class="post-tool" data-fmt="italic" data-i18n-title="post_italic"><i>I</i></button>
+            <button type="button" class="post-tool" data-fmt="underline" data-i18n-title="post_underline"><u>U</u></button>
+            <button type="button" class="post-tool" data-fmt="strikeThrough" data-i18n-title="post_strike"><s>S</s></button>
+          </div>
+          <div class="comment-edit" data-comment-edit contenteditable="true"></div>
+          <div class="comment-compose-row">
+            <span class="comment-count" data-comment-count-label>0/300</span>
+            <button type="button" data-comment-send data-i18n="post_comment_send">send</button>
+          </div>
+          <p class="account-error" data-comment-error></p>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="confirm-modal" data-close-modal hidden>
     <div class="confirm-dialog">
       <p data-i18n="post_close_ask">Close?</p>
@@ -438,9 +468,9 @@
     </div>
   </div>
   <script src="js/config.js"></script>
-  <script src="js/i18n.js?v=64"></script>
-  <script src="js/account.js?v=64"></script>
-  <script src="js/posts.js?v=64"></script>
-  <script src="js/main.js?v=64"></script>
+  <script src="js/i18n.js?v=65"></script>
+  <script src="js/account.js?v=65"></script>
+  <script src="js/posts.js?v=65"></script>
+  <script src="js/main.js?v=65"></script>
 </body>
 </html>

@@ -91,7 +91,12 @@ var translations = {
     proj_status_planned: "planned",
     proj_versions: "versions",
     proj_platforms: "platforms",
-    proj_preview: "preview photo"
+    proj_preview: "preview photo",
+    post_write_comment: "write a comment",
+    post_comments: "comments",
+    post_comment_send: "send",
+    err_comment_auth: "log in to comment",
+    err_comment_long: "max 300 characters"
   },
   ua: {
     intro: "я — український модороб данделіон, зосереджений на атмосферних механіках, дрібних деталях і захопливому ґеймплеєві.",
@@ -178,7 +183,12 @@ var translations = {
     proj_status_planned: "запланований",
     proj_versions: "версії",
     proj_platforms: "платформи",
-    proj_preview: "прев'ю"
+    proj_preview: "прев'ю",
+    post_write_comment: "написати коментар",
+    post_comments: "коментарі",
+    post_comment_send: "надіслати",
+    err_comment_auth: "увійди, щоб коментувати",
+    err_comment_long: "максимум 300 символів"
   }
 };
 
