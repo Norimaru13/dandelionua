@@ -11,6 +11,7 @@
   var liveSnapshot = null;
   var workSnapshot = null;
   var noticeLock = false;
+  var openSnapshot = null;
   var lastPosts = [];
   var feedKind = "project";
   var savedRange = null;
@@ -96,7 +97,9 @@
   }
 
   function isPendingPost(post) {
-    return Boolean(post && !isDraftPost(post) && parsePending(post));
+    if (!post || isDraftPost(post)) return false;
+    if (post.has_pending === true || post.has_pending === "t" || post.has_pending === "true") return true;
+    return Boolean(parsePending(post));
   }
 
   function formatWhen(iso) {
@@ -894,10 +897,10 @@
     if (on && liveSnapshot) fillFormFrom(liveSnapshot);
     viewingLive = Boolean(on);
     if (form) form.classList.toggle("is-live-view", viewingLive);
-    if (eye) {
-      eye.classList.toggle("is-on", viewingLive);
-      eye.setAttribute("aria-pressed", viewingLive ? "true" : "false");
-    }
+    document.querySelectorAll("[data-post-eye]").forEach(function (btn) {
+      btn.classList.toggle("is-on", viewingLive);
+      btn.setAttribute("aria-pressed", viewingLive ? "true" : "false");
+    });
     ["en", "ua"].forEach(function (lang) {
       var lead = $('[data-lead="' + lang + '"]');
       var box = editor(lang);
@@ -912,16 +915,20 @@
   }
 
   function syncEyeButton() {
-    var eye = $("[data-post-eye]");
-    if (!eye) return;
     var show = Boolean(editingId && !editingWasDraft);
-    eye.hidden = !show;
-    if (!show) setLivePreview(false);
+    document.querySelectorAll("[data-post-eye]").forEach(function (eye) {
+      eye.hidden = !show;
+      eye.classList.toggle("is-on", show && viewingLive);
+      eye.setAttribute("aria-pressed", show && viewingLive ? "true" : "false");
+    });
+    if (!show && viewingLive) setLivePreview(false);
   }
 
   function syncKindLock() {
     var form = $("[data-post-form]");
-    if (form) form.classList.toggle("is-editing", Boolean(editingId));
+    if (!form) return;
+    form.classList.toggle("is-editing", Boolean(editingId));
+    form.classList.toggle("is-draft-edit", Boolean(editingId && editingWasDraft));
   }
 
   function guardLiveView(e) {
@@ -938,6 +945,7 @@
     viewingLive = false;
     liveSnapshot = null;
     workSnapshot = null;
+    openSnapshot = null;
     editingWasDraft = false;
     if (form) {
       form.reset();
@@ -1031,18 +1039,71 @@
   function hideConfirm() {
     var box = $("[data-confirm-modal]");
     var no = $("[data-confirm-no]");
-    if (no) no.hidden = false;
     noticeLock = false;
     if (box) {
       box.classList.remove("is-open");
       confirmTimer = window.setTimeout(function () {
         box.hidden = true;
+        if (no) no.hidden = false;
       }, 280);
+    } else if (no) {
+      no.hidden = false;
     }
     confirmFn = null;
   }
 
+  function htmlPlain(html) {
+    var d = document.createElement("div");
+    d.innerHTML = html || "";
+    return (d.textContent || "").replace(/\u200b/g, "").trim();
+  }
+
+  function snapshotKey(s) {
+    if (!s) return "";
+    var m = s.meta || {};
+    return JSON.stringify({
+      kind: s.kind || "",
+      title_en: (s.title_en || "").trim(),
+      title_ua: (s.title_ua || "").trim(),
+      lead_en: htmlPlain(s.lead_en),
+      lead_ua: htmlPlain(s.lead_ua),
+      body_en: htmlPlain(s.body_en),
+      body_ua: htmlPlain(s.body_ua),
+      types: m.types || [],
+      state: m.state || "",
+      status: m.status || "",
+      versions: m.versions || [],
+      platforms: m.platforms || [],
+      preview: s.preview_data ? String(s.preview_data).length : 0,
+      photos: (s.photos || []).map(function (p) { return (p && p.data) ? String(p.data).length : 0; })
+    });
+  }
+
+  function isCreateEmpty() {
+    var s = formSnapshot();
+    if ((s.title_en || "").trim() || (s.title_ua || "").trim()) return false;
+    if (htmlPlain(s.lead_en) || htmlPlain(s.lead_ua) || htmlPlain(s.body_en) || htmlPlain(s.body_ua)) return false;
+    if (s.preview_data || (s.photos && s.photos.length)) return false;
+    var m = s.meta || {};
+    if ((m.types && m.types.length) || m.state || m.status || (m.versions && m.versions.length) || (m.platforms && m.platforms.length)) return false;
+    return true;
+  }
+
+  function isUnchangedEdit() {
+    if (!openSnapshot) return false;
+    var now = viewingLive && workSnapshot ? workSnapshot : formSnapshot();
+    return snapshotKey(now) === snapshotKey(openSnapshot);
+  }
+
   function requestClose() {
+    if (!editingId && isCreateEmpty()) {
+      forceClosePostModal();
+      return;
+    }
+    if (editingId && isUnchangedEdit()) {
+      forceClosePostModal();
+      return;
+    }
     var box = $("[data-close-modal]");
     if (!box) {
       forceClosePostModal();
@@ -1314,19 +1375,34 @@
   }
 
   function startEdit(post) {
-    var form = $("[data-post-form]");
-    if (!form) return;
-    editingId = post.id;
-    editingWasDraft = isDraftPost(post);
-    liveSnapshot = postToLiveSnap(post);
-    workSnapshot = parsePending(post);
-    viewingLive = false;
-    fillFormFrom(workSnapshot || liveSnapshot);
-    setPostLang(typeof getLang === "function" && getLang() === "ua" ? "ua" : "en");
-    syncKindLock();
-    openPostModal();
-    setLivePreview(false);
-    syncEyeButton();
+    function go(full) {
+      var form = $("[data-post-form]");
+      if (!form || !full) return;
+      editingId = full.id;
+      editingWasDraft = isDraftPost(full);
+      liveSnapshot = postToLiveSnap(full);
+      workSnapshot = parsePending(full);
+      viewingLive = false;
+      fillFormFrom(workSnapshot || liveSnapshot);
+      setPostLang(typeof getLang === "function" && getLang() === "ua" ? "ua" : "en");
+      syncKindLock();
+      openPostModal();
+      setLivePreview(false);
+      syncEyeButton();
+      openSnapshot = formSnapshot();
+    }
+    var tok = token();
+    if (!tok) {
+      go(post);
+      return;
+    }
+    rpc("get_post", { p_token: tok, p_id: post.id })
+      .then(function (data) {
+        go(data && data.ok && data.post ? data.post : post);
+      })
+      .catch(function () {
+        go(post);
+      });
   }
 
   function askDelete(postId) {
@@ -1984,6 +2060,7 @@
         if (form && form.kind) form.kind.value = activeKind();
         syncFormKind();
         openPostModal();
+        openSnapshot = formSnapshot();
       });
     }
     if (closeBtn) closeBtn.addEventListener("click", requestClose);
@@ -1993,15 +2070,14 @@
       form.addEventListener("keydown", guardLiveView, true);
       form.addEventListener("paste", guardLiveView, true);
     }
-    var eyeBtn = $("[data-post-eye]");
-    if (eyeBtn) {
+    document.querySelectorAll("[data-post-eye]").forEach(function (eyeBtn) {
       eyeBtn.addEventListener("click", function (e) {
         e.preventDefault();
         e.stopPropagation();
         if (!editingId || editingWasDraft) return;
         setLivePreview(!viewingLive);
       });
-    }
+    });
     var saveBtn = $("[data-post-save]");
     if (saveBtn) {
       saveBtn.addEventListener("click", function () {

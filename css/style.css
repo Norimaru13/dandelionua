@@ -1032,6 +1032,15 @@ body[data-list-kind] .feed-more {
   display: none;
 }
 
+.post-eye-row {
+  display: none;
+  justify-content: flex-end;
+}
+
+.post-form.is-editing:not(.is-draft-edit) .post-eye-row {
+  display: flex;
+}
+
 .post-form.is-live-view .proj-chip,
 .post-form.is-live-view .post-tool,
 .post-form.is-live-view .post-swatch,
