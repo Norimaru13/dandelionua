@@ -65,6 +65,21 @@
     return post && post.kind === "publication" ? "publication" : "project";
   }
 
+  function postMeta(post) {
+    var meta = post && post.meta;
+    if (typeof meta === "string") {
+      try { meta = JSON.parse(meta); } catch (e) { meta = null; }
+    }
+    return meta && typeof meta === "object" ? meta : {};
+  }
+
+  function isDraftPost(post) {
+    if (!post) return false;
+    if (post.draft === true || post.draft === 1 || post.draft === "t" || post.draft === "true") return true;
+    var meta = postMeta(post);
+    return meta.draft === true || meta.draft === 1 || meta.draft === "true";
+  }
+
   function formatWhen(iso) {
     if (!iso) return "";
     var d = new Date(iso);
@@ -84,7 +99,7 @@
     var admin = isAdmin();
     var out = (list || []).filter(function (post) {
       if (postKind(post) !== kind) return false;
-      if (post.draft && !admin) return false;
+      if (isDraftPost(post) && !admin) return false;
       return true;
     });
     if (pageKind()) return out;
@@ -928,7 +943,7 @@
       var article = document.createElement("article");
       article.className = "post";
       article.setAttribute("data-post-id", post.id);
-      if (admin && post.draft) {
+      if (admin && isDraftPost(post)) {
         article.classList.add("post-is-draft");
         var mark = document.createElement("p");
         mark.className = "post-draft";
@@ -1108,7 +1123,7 @@
   function recordViews(list) {
     var visitor = visitorId();
     list.forEach(function (post) {
-      if (post.draft) return;
+      if (isDraftPost(post)) return;
       rpc("record_post_view", { p_post: post.id, p_visitor: visitor })
         .then(function (data) {
           if (!data || !data.ok) return;
@@ -1511,6 +1526,7 @@
     }
     var packed = kind === "publication" ? packBodies() : { photos: [], bodyEn: "", bodyUa: "" };
     var meta = kind === "project" ? readMeta() : {};
+    meta.draft = Boolean(asDraft);
     setPostError("");
     var payload = {
       p_token: auth,
