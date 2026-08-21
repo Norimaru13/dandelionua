@@ -206,4 +206,89 @@ document.addEventListener("DOMContentLoaded", function () {
 
     syncThumb();
   }
+
+  var flowerSrcs = [
+    "assets/icons/dandelion.png",
+    "assets/icons/dandelion_puff.png",
+    "assets/icons/golden_dandelion.png",
+    "assets/icons/poppy.png",
+    "assets/icons/pink_poppy.png",
+    "assets/icons/golden_poppy.png"
+  ];
+  var flowerBtn = document.querySelector("[data-footer-flower]");
+  var flowerImg = flowerBtn ? flowerBtn.querySelector("img") : null;
+  var flowerIndex = 0;
+  var flowerStreak = 0;
+  var flowerLast = 0;
+  var flowerEggTimer = 0;
+  var flowerEggAudio = null;
+  var FLOWER_BTN = 32;
+  var FLOWER_MAX = FLOWER_BTN * 3;
+
+  function clearFlowerEgg() {
+    window.clearTimeout(flowerEggTimer);
+    flowerEggTimer = 0;
+    if (flowerEggAudio) {
+      try { flowerEggAudio.pause(); } catch (err) {}
+      flowerEggAudio = null;
+    }
+    var layer = document.querySelector(".flower-burst");
+    if (layer && layer.parentNode) layer.parentNode.removeChild(layer);
+  }
+
+  function fireFlowerEgg() {
+    clearFlowerEgg();
+    var layer = document.createElement("div");
+    layer.className = "flower-burst";
+    var gif = document.createElement("img");
+    gif.className = "flower-gif";
+    gif.src = "assets/rick roll gif.gif";
+    gif.alt = "";
+    layer.appendChild(gif);
+    var n = 64;
+    var i;
+    for (i = 0; i < n; i += 1) {
+      var bit = document.createElement("img");
+      bit.className = "flower-bit";
+      bit.src = flowerSrcs[Math.floor(Math.random() * flowerSrcs.length)];
+      bit.alt = "";
+      var size = FLOWER_BTN + Math.random() * (FLOWER_MAX - FLOWER_BTN);
+      var x0 = Math.random() * window.innerWidth;
+      var y0 = Math.random() * window.innerHeight;
+      var x1 = (Math.random() < 0.5 ? -1 : 1) * (window.innerWidth + size);
+      var y1 = (Math.random() - 0.5) * window.innerHeight * 2;
+      bit.style.width = size + "px";
+      bit.style.height = size + "px";
+      bit.style.transform = "translate(" + x0 + "px, " + y0 + "px) rotate(0deg)";
+      layer.appendChild(bit);
+      (function (el, dx, dy, rot, ms) {
+        window.requestAnimationFrame(function () {
+          window.requestAnimationFrame(function () {
+            el.style.transition = "transform " + ms + "ms linear, opacity " + ms + "ms linear";
+            el.style.transform = "translate(" + dx + "px, " + dy + "px) rotate(" + rot + "deg)";
+            el.style.opacity = "0.2";
+          });
+        });
+      })(bit, x0 + x1, y0 + y1, (Math.random() * 720 - 360), 3500 + Math.random() * 2500);
+    }
+    document.body.appendChild(layer);
+    flowerEggAudio = new Audio("assets/rick-rolled-sound.mp3");
+    flowerEggAudio.play().catch(function () {});
+    flowerEggTimer = window.setTimeout(clearFlowerEgg, 6000);
+  }
+
+  if (flowerBtn && flowerImg) {
+    flowerBtn.addEventListener("click", function () {
+      flowerIndex = (flowerIndex + 1) % flowerSrcs.length;
+      flowerImg.src = flowerSrcs[flowerIndex];
+      var now = Date.now();
+      if (flowerLast && now - flowerLast > 100) flowerStreak = 1;
+      else flowerStreak += 1;
+      flowerLast = now;
+      if (flowerStreak >= 18) {
+        flowerStreak = 0;
+        fireFlowerEgg();
+      }
+    });
+  }
 });

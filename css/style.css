@@ -534,6 +534,11 @@ button {
 
 .site-footer {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
   background: #6371af;
   color: #28402f;
   text-align: center;
@@ -543,6 +548,49 @@ button {
 
 .site-footer p {
   margin: 0;
+}
+
+.footer-flower {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.footer-flower img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.flower-burst {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.flower-burst .flower-bit {
+  position: absolute;
+  left: 0;
+  top: 0;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+.flower-burst .flower-gif {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  max-width: min(420px, 72vw);
+  max-height: 72vh;
+  transform: translate(-50%, -50%);
 }
 
 .header-tools {
@@ -1656,8 +1704,8 @@ body[data-list-kind] .feed-more {
 }
 
 .comment-vote.is-disliked svg {
-  fill: #96a5d5;
-  stroke: #96a5d5;
+  fill: #c9d3f3;
+  stroke: #c9d3f3;
 }
 
 .comment-modal .post-dialog {
@@ -1680,7 +1728,7 @@ body[data-list-kind] .feed-more {
   padding: 8px 10px;
   border: 2px solid #28402f;
   background: #8491bd;
-  color: #96a5d5;
+  color: #c9d3f3;
 }
 
 .comment-head {
@@ -1709,7 +1757,7 @@ body[data-list-kind] .feed-more {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #96a5d5;
+  color: #c9d3f3;
   font: inherit;
   font-size: 15px;
   text-decoration: underline;
@@ -1729,7 +1777,7 @@ body[data-list-kind] .feed-more {
   padding: 0;
   border: 0;
   background: transparent;
-  color: #96a5d5;
+  color: #c9d3f3;
   font: inherit;
 }
 
@@ -1737,7 +1785,7 @@ body[data-list-kind] .feed-more {
   width: 18px;
   height: 18px;
   fill: none;
-  stroke: #96a5d5;
+  stroke: #c9d3f3;
   stroke-width: 1.6;
 }
 
