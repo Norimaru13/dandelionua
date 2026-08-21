@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Tiny5&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=76">
+  <link rel="stylesheet" href="css/style.css?v=77">
   <script src="assets/embed/manifest.js"></script>
   <script src="assets/embed/apply.js"></script>
 </head>
@@ -18,10 +18,10 @@
     <div class="menu-wrap">
       <button type="button" class="menu-btn tex-btn" data-menu-toggle aria-expanded="false">
         <span class="btn-tex">
-          <img class="icon-off" src="assets/icons/dandelion_button.png?v=76" alt="">
-          <img class="icon-hover" src="assets/icons/dandelion_button_hovered.png?v=76" alt="">
-          <img class="icon-press" src="assets/icons/dandelion_button_pressed.png?v=76" alt="">
-          <img class="icon-active" src="assets/icons/dandelion_button_active.png?v=76" alt="">
+          <img class="icon-off" src="assets/icons/dandelion_button.png?v=77" alt="">
+          <img class="icon-hover" src="assets/icons/dandelion_button_hovered.png?v=77" alt="">
+          <img class="icon-press" src="assets/icons/dandelion_button_pressed.png?v=77" alt="">
+          <img class="icon-active" src="assets/icons/dandelion_button_active.png?v=77" alt="">
         </span>
       </button>
       <div class="side-menu-clip">
@@ -81,8 +81,14 @@
         </span>
       </button>
     </div>
-    <button type="button" class="account-btn" data-account-toggle>
-      <span data-account-label>log in</span>
+    <span class="account-name" data-account-label>guest</span>
+    <button type="button" class="account-toggle tex-btn" data-account-toggle aria-expanded="false">
+      <span class="btn-tex">
+        <img class="icon-off" src="assets/icons/account_button.png?v=77" alt="">
+        <img class="icon-hover" src="assets/icons/account_button_hovered.png?v=77" alt="">
+        <img class="icon-press" src="assets/icons/account_button_pressed.png?v=77" alt="">
+        <img class="icon-active" src="assets/icons/account_button_hovered.png?v=77" alt="">
+      </span>
     </button>
     </div>
   </header>
@@ -224,7 +230,7 @@
   <footer class="site-footer">
     <p data-i18n="footer">© The site was created by Norimaru, based on Dandelion's idea</p>
     <button type="button" class="footer-flower" data-footer-flower>
-      <img src="assets/icons/dandelion.png?v=76" alt="">
+      <img src="assets/icons/dandelion.png?v=77" alt="">
     </button>
   </footer>
   </div>
@@ -242,25 +248,49 @@
         <img class="close-press" src="assets/icons/cross_button_pressed.png" alt="">
       </button>
       <div data-account-form-box>
-        <form data-account-form>
+        <div class="post-lang-tabs" data-account-tabs>
+          <button type="button" class="post-lang-tab is-active" data-account-tab="login" data-i18n="account_login">log in</button>
+          <button type="button" class="post-lang-tab" data-account-tab="register" data-i18n="account_create">create account</button>
+        </div>
+        <form class="account-form" data-account-form data-account-mode="login">
           <label>
             <span data-i18n="account_nick">nick</span>
             <input name="nick" maxlength="20" autocomplete="username">
           </label>
           <label>
             <span data-i18n="account_password">password</span>
-            <input name="password" type="password" autocomplete="current-password">
+            <span class="pass-row">
+              <input name="password" type="password" autocomplete="current-password">
+              <button type="button" class="pass-eye" data-pass-eye data-i18n-tip="account_show_password" data-i18n-title="account_show_password">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5C6 5 2.3 10.2 2 12c.3 1.8 4 7 10 7s9.7-5.2 10-7c-.3-1.8-4-7-10-7zm0 10.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4z"/></svg>
+              </button>
+            </span>
+          </label>
+          <label data-account-repeat>
+            <span data-i18n="account_password_repeat">repeat password</span>
+            <span class="pass-row">
+              <input name="password2" type="password" autocomplete="new-password">
+              <button type="button" class="pass-eye" data-pass-eye data-i18n-tip="account_show_password" data-i18n-title="account_show_password">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5C6 5 2.3 10.2 2 12c.3 1.8 4 7 10 7s9.7-5.2 10-7c-.3-1.8-4-7-10-7zm0 10.2A3.2 3.2 0 1 1 12 8.8a3.2 3.2 0 0 1 0 6.4z"/></svg>
+              </button>
+            </span>
           </label>
           <p class="account-error" data-account-error></p>
           <div class="account-actions">
-            <button type="submit" data-i18n="account_login">log in</button>
-            <button type="button" data-account-register data-i18n="account_register">create profile</button>
+            <button type="submit" data-account-submit data-i18n="account_login">log in</button>
           </div>
         </form>
       </div>
       <div data-account-session hidden>
         <p class="account-session-nick" data-account-session-nick></p>
-        <button type="button" data-account-logout data-i18n="account_logout">log out</button>
+        <div class="account-nick-edit" data-account-nick-edit hidden>
+          <input data-account-new-nick maxlength="20" autocomplete="username">
+          <button type="button" data-account-nick-save data-i18n="post_save">save</button>
+        </div>
+        <div class="account-actions">
+          <button type="button" data-account-nick-open data-i18n="account_edit_nick">edit nick</button>
+          <button type="button" data-account-logout data-i18n="account_logout">log out</button>
+        </div>
       </div>
     </div>
   </div>
@@ -477,9 +507,9 @@
     </div>
   </div>
   <script src="js/config.js"></script>
-  <script src="js/i18n.js?v=76"></script>
-  <script src="js/account.js?v=76"></script>
-  <script src="js/posts.js?v=76"></script>
-  <script src="js/main.js?v=76"></script>
+  <script src="js/i18n.js?v=77"></script>
+  <script src="js/account.js?v=77"></script>
+  <script src="js/posts.js?v=77"></script>
+  <script src="js/main.js?v=77"></script>
 </body>
 </html>

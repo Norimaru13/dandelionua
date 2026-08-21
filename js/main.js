@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
     tip.classList.remove("is-on");
   }
 
-  document.querySelectorAll(".side-slot[data-i18n-tip]").forEach(function (el) {
+  document.querySelectorAll("[data-i18n-tip]").forEach(function (el) {
     el.addEventListener("mouseenter", function () {
       tip.textContent = t(el.getAttribute("data-i18n-tip"));
       var r = el.getBoundingClientRect();
