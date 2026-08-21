@@ -1143,7 +1143,7 @@
   }
 
   function dislikeSvg() {
-    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 9V5a3 3 0 0 0-3-3L7 11v10h11.2a2 2 0 0 0 2-1.7l1.6-8A2 2 0 0 0 18.8 9H14z"/></svg>';
+    return '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17 14V2h2.7A2.3 2.3 0 0 1 22 4.3v7A2.3 2.3 0 0 1 19.7 13.6H17z"/><path d="M17 14h-2.8a2 2 0 0 0-1.8 1.1L10 22a3 3 0 0 1-.3-1.2V18L8.7 14H4.2a2 2 0 0 1-1.9-2.6l2.3-8A2 2 0 0 1 6.5 2H17v12z"/></svg>';
   }
 
   function commentCountSvg() {

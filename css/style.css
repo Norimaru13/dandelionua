@@ -1490,6 +1490,7 @@ body[data-list-kind] .feed-more {
 .post-is-project .post-meta {
   margin: 0;
   padding: 10px 12px;
+  background: #67a77a;
 }
 
 .post-is-project .post-card-foot {
