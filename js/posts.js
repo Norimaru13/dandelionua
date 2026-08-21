@@ -4,6 +4,7 @@
 (function () {
   var MAX_PHOTOS = 4;
   var MAX_BYTES = 600000;
+  var LEAD_MAX = 300;
   var VISITOR_KEY = "dandelion-visitor";
   var editingId = null;
   var editingWasDraft = false;
@@ -703,6 +704,56 @@
     return wrap.innerHTML;
   }
 
+  function textLen(el) {
+    return ((el && el.textContent) || "").replace(/\u200b/g, "").length;
+  }
+
+  function selectedLenIn(box) {
+    var sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return 0;
+    var node = sel.anchorNode;
+    if (!node || (node !== box && !box.contains(node))) return 0;
+    return String(sel).length;
+  }
+
+  function clampBoxToMax(box, max) {
+    if (!box || textLen(box) <= max) return;
+    var left = max;
+    var walker = document.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      if (left <= 0) {
+        n.nodeValue = "";
+        return;
+      }
+      if (n.nodeValue.length > left) {
+        n.nodeValue = n.nodeValue.slice(0, left);
+        left = 0;
+      } else {
+        left -= n.nodeValue.length;
+      }
+    });
+  }
+
+  function clipLeadDisplay(raw) {
+    var text = raw || "";
+    var wrap = document.createElement("div");
+    if (looksHtml(text)) wrap.innerHTML = sanitizeLead(text);
+    else wrap.textContent = text;
+    if (textLen(wrap) > LEAD_MAX) clampBoxToMax(wrap, LEAD_MAX);
+    return wrap;
+  }
+
+  function syncLeadCount(lang) {
+    var langs = lang ? [lang] : ["en", "ua"];
+    langs.forEach(function (l) {
+      var el = $('[data-lead="' + l + '"]');
+      var label = $('[data-lead-count="' + l + '"]');
+      if (label) label.textContent = (el ? textLen(el) : 0) + "/" + LEAD_MAX;
+    });
+  }
+
   function fillLeads(post) {
     ["en", "ua"].forEach(function (lang) {
       var el = $('[data-lead="' + lang + '"]');
@@ -710,18 +761,24 @@
       var raw = post ? ((lang === "ua" ? post.lead_ua : post.lead_en) || "") : "";
       if (looksHtml(raw)) el.innerHTML = sanitizeLead(raw);
       else el.innerHTML = escapeText(raw);
+      clampBoxToMax(el, LEAD_MAX);
     });
+    syncLeadCount();
   }
 
   function readLead(lang) {
     var el = $('[data-lead="' + lang + '"]');
     if (!el) return "";
-    if (formKind() === "project") return (el.textContent || "").replace(/\s+/g, " ").trim();
+    if (formKind() === "project") {
+      var text = (el.textContent || "").replace(/\s+/g, " ").trim();
+      return text.slice(0, LEAD_MAX);
+    }
     var html = sanitizeLead(el.innerHTML);
     var tmp = document.createElement("div");
     tmp.innerHTML = html;
     if (!(tmp.textContent || "").trim()) return "";
-    return html;
+    if (textLen(tmp) > LEAD_MAX) clampBoxToMax(tmp, LEAD_MAX);
+    return tmp.innerHTML;
   }
 
   function looksHtml(text) {
@@ -1286,15 +1343,13 @@
 
       if (isProject) {
         article.classList.add("post-is-project");
-        if (title) {
-          var h = document.createElement("h2");
-          h.className = "post-title";
-          var link = document.createElement("a");
-          link.href = "project.html?id=" + encodeURIComponent(post.id);
-          link.textContent = title;
-          h.appendChild(link);
-          article.appendChild(h);
-        }
+        var h = document.createElement("h2");
+        h.className = "post-title";
+        var link = document.createElement("a");
+        link.href = "project.html?id=" + encodeURIComponent(post.id);
+        link.textContent = title || "";
+        h.appendChild(link);
+        article.appendChild(h);
         if (post.preview_data && post.preview_mime) {
           var previewImg = document.createElement("img");
           previewImg.className = "post-preview";
@@ -1325,43 +1380,73 @@
         }
       }
 
-      if (lead) {
+      if (isProject || lead) {
         var leadEl = document.createElement("p");
+        var clipped = clipLeadDisplay(lead);
         if (looksHtml(lead)) {
           leadEl.className = "post-lead post-lead-html";
-          leadEl.innerHTML = sanitizeLead(lead);
+          leadEl.innerHTML = clipped.innerHTML;
         } else {
           leadEl.className = "post-lead";
-          leadEl.textContent = lead;
+          leadEl.textContent = clipped.textContent || "";
         }
         host.appendChild(leadEl);
       }
-      if (isProject && post.meta) {
+      if (isProject) {
         var meta = postMeta(post);
-        var lines = [];
         var typeKeys = { mod: "proj_type_mod", datapack: "proj_type_datapack", resourcepack: "proj_type_resourcepack" };
         var stateKeys = { release: "proj_state_release", open_beta: "proj_state_open_beta", closed_beta: "proj_state_closed_beta" };
         var statusKeys = { ready: "proj_status_ready", wip: "proj_status_wip", paused: "proj_status_paused", planned: "proj_status_planned" };
         var plat = { vanilla: "Vanilla", fabric: "Fabric", neoforge: "NeoForge", forge: "Forge" };
-        if (meta.types && meta.types.length) {
-          lines.push(t("proj_types") + ": " + meta.types.map(function (v) { return t(typeKeys[v] || v); }).join(", "));
+        var compact = !pageKind();
+        var chips = [];
+        function addChip(label) {
+          if (label) chips.push(label);
         }
-        if (meta.state && stateKeys[meta.state]) lines.push(t("proj_state") + ": " + t(stateKeys[meta.state]));
-        if (meta.status && statusKeys[meta.status]) lines.push(t("proj_status") + ": " + t(statusKeys[meta.status]));
-        if (meta.versions && meta.versions.length) lines.push(t("proj_versions") + ": " + meta.versions.join(", "));
-        if (meta.platforms && meta.platforms.length) {
-          lines.push(t("proj_platforms") + ": " + meta.platforms.map(function (v) { return plat[v] || v; }).join(", "));
+        function addTypes() {
+          if (meta.types && meta.types.length) {
+            meta.types.forEach(function (v) { addChip(t(typeKeys[v] || v)); });
+          }
         }
-        if (lines.length) {
-          var metaEl = document.createElement("div");
-          metaEl.className = "post-meta";
-          lines.forEach(function (line) {
-            var mp = document.createElement("p");
-            mp.textContent = line;
-            metaEl.appendChild(mp);
-          });
-          host.appendChild(metaEl);
+        function addState() {
+          if (meta.state && stateKeys[meta.state]) addChip(t(stateKeys[meta.state]));
         }
+        function addStatus() {
+          if (meta.status && statusKeys[meta.status]) addChip(t(statusKeys[meta.status]));
+        }
+        function addVersions() {
+          if (meta.versions && meta.versions.length) {
+            meta.versions.forEach(function (v) { addChip(v); });
+          }
+        }
+        function addPlatforms() {
+          if (meta.platforms && meta.platforms.length) {
+            meta.platforms.forEach(function (v) { addChip(plat[v] || v); });
+          }
+        }
+        if (compact) {
+          addState();
+          addVersions();
+          addPlatforms();
+        } else {
+          addTypes();
+          addPlatforms();
+          addVersions();
+          addState();
+          addStatus();
+        }
+        var metaEl = document.createElement("div");
+        metaEl.className = "post-meta";
+        var chipWrap = document.createElement("div");
+        chipWrap.className = "post-meta-chips";
+        chips.forEach(function (label) {
+          var chip = document.createElement("span");
+          chip.className = "proj-filter-chip";
+          chip.textContent = label;
+          chipWrap.appendChild(chip);
+        });
+        metaEl.appendChild(chipWrap);
+        host.appendChild(metaEl);
       }
       if (body) {
         var p = document.createElement("div");
@@ -1419,8 +1504,8 @@
         var stats = document.createElement("div");
         stats.className = "post-card-stats post-react";
         fillReact(stats, post, article, true);
-        foot.appendChild(comBtn);
         foot.appendChild(stats);
+        foot.appendChild(comBtn);
         article.appendChild(foot);
       } else {
         var react = document.createElement("div");
@@ -2147,6 +2232,24 @@
         var a = e.target.closest("a");
         if (a && box.contains(a)) e.preventDefault();
       });
+      if (box.hasAttribute("data-lead")) {
+        box.addEventListener("beforeinput", function (e) {
+          if (!e.data) return;
+          var room = LEAD_MAX - (textLen(box) - selectedLenIn(box));
+          if (String(e.data).length > room) e.preventDefault();
+        });
+        box.addEventListener("paste", function (e) {
+          var clip = (e.clipboardData && e.clipboardData.getData("text/plain")) || "";
+          e.preventDefault();
+          var room = LEAD_MAX - (textLen(box) - selectedLenIn(box));
+          if (room <= 0) return;
+          document.execCommand("insertText", false, clip.slice(0, room));
+        });
+        box.addEventListener("input", function () {
+          if (textLen(box) > LEAD_MAX) clampBoxToMax(box, LEAD_MAX);
+          syncLeadCount(box.getAttribute("data-lead"));
+        });
+      }
     });
 
     var dialog = document.querySelector(".post-dialog");
