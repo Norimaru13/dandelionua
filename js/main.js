@@ -393,4 +393,42 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
   }
+
+  var caveSrcs = [
+    "assets/cave_sound_1.mp3",
+    "assets/cave_sound_2.mp3",
+    "assets/cave_sound_3.mp3"
+  ];
+  var caveWait = 0;
+
+  function caveDelay() {
+    return 15000 + Math.random() * 25000;
+  }
+
+  function scheduleCave() {
+    window.clearTimeout(caveWait);
+    caveWait = window.setTimeout(playCave, caveDelay());
+  }
+
+  function playCave() {
+    window.clearTimeout(caveWait);
+    var src = caveSrcs[Math.floor(Math.random() * caveSrcs.length)];
+    var clip = new Audio(src);
+    clip.play()
+      .then(function () {
+        clip.addEventListener("ended", scheduleCave);
+      })
+      .catch(function () {
+        scheduleCave();
+      });
+  }
+
+  ["mousemove", "mousedown", "keydown", "scroll", "touchstart", "wheel"].forEach(function (name) {
+    document.addEventListener(name, scheduleCave, { passive: true });
+  });
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) window.clearTimeout(caveWait);
+    else scheduleCave();
+  });
+  scheduleCave();
 });
