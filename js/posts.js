@@ -38,6 +38,8 @@
   var META_STATES = ["release", "open_beta", "closed_beta"];
   var META_STATUSES = ["ready", "wip", "paused", "planned"];
   var META_PLATFORMS = ["vanilla", "fabric", "neoforge", "forge"];
+  var MAIN_LOADERS = ["fabric", "neoforge", "forge"];
+  var CHIP_VERSION_MAX = 5;
 
   function $(sel) {
     return document.querySelector(sel);
@@ -1399,52 +1401,67 @@
         var statusKeys = { ready: "proj_status_ready", wip: "proj_status_wip", paused: "proj_status_paused", planned: "proj_status_planned" };
         var plat = { vanilla: "Vanilla", fabric: "Fabric", neoforge: "NeoForge", forge: "Forge" };
         var compact = !pageKind();
-        var chips = [];
-        function addChip(label) {
-          if (label) chips.push(label);
-        }
-        function addTypes() {
-          if (meta.types && meta.types.length) {
-            meta.types.forEach(function (v) { addChip(t(typeKeys[v] || v)); });
+        var chipWrap = document.createElement("div");
+        chipWrap.className = "post-meta-chips";
+        function appendChip(shown, extra) {
+          if (!shown.length && !extra.length) return;
+          var chip = document.createElement("span");
+          chip.className = "proj-filter-chip";
+          if (shown.length) {
+            var text = document.createElement("span");
+            text.className = "proj-filter-chip-text";
+            text.textContent = shown.join(", ");
+            chip.appendChild(text);
           }
-        }
-        function addState() {
-          if (meta.state && stateKeys[meta.state]) addChip(t(stateKeys[meta.state]));
-        }
-        function addStatus() {
-          if (meta.status && statusKeys[meta.status]) addChip(t(statusKeys[meta.status]));
-        }
-        function addVersions() {
-          if (meta.versions && meta.versions.length) {
-            meta.versions.forEach(function (v) { addChip(v); });
+          if (extra.length) {
+            var more = document.createElement("span");
+            more.className = "proj-filter-chip-more";
+            more.textContent = "+" + extra.length;
+            chip.appendChild(more);
+            chip.setAttribute("data-tip", shown.concat(extra).join(", "));
           }
+          chipWrap.appendChild(chip);
         }
-        function addPlatforms() {
-          if (meta.platforms && meta.platforms.length) {
-            meta.platforms.forEach(function (v) { addChip(plat[v] || v); });
-          }
+        function addStateChip() {
+          if (meta.state && stateKeys[meta.state]) appendChip([t(stateKeys[meta.state])], []);
+        }
+        function addStatusChip() {
+          if (meta.status && statusKeys[meta.status]) appendChip([t(statusKeys[meta.status])], []);
+        }
+        function addVersionsChip() {
+          var all = (meta.versions || []).filter(function (v) {
+            return PROJECT_VERSIONS.indexOf(v) >= 0;
+          }).slice().sort(function (a, b) {
+            return PROJECT_VERSIONS.indexOf(a) - PROJECT_VERSIONS.indexOf(b);
+          });
+          if (!all.length) return;
+          appendChip(all.slice(0, CHIP_VERSION_MAX), all.slice(CHIP_VERSION_MAX));
+        }
+        function addLoadersChip() {
+          var platforms = meta.platforms || [];
+          var types = meta.types || [];
+          var shown = MAIN_LOADERS.filter(function (v) {
+            return platforms.indexOf(v) >= 0;
+          }).map(function (v) { return plat[v] || v; });
+          var extra = [];
+          if (platforms.indexOf("vanilla") >= 0) extra.push(plat.vanilla);
+          ["datapack", "resourcepack"].forEach(function (v) {
+            if (types.indexOf(v) >= 0) extra.push(t(typeKeys[v]));
+          });
+          appendChip(shown, extra);
         }
         if (compact) {
-          addState();
-          addVersions();
-          addPlatforms();
+          addStateChip();
+          addVersionsChip();
+          addLoadersChip();
         } else {
-          addTypes();
-          addPlatforms();
-          addVersions();
-          addState();
-          addStatus();
+          addLoadersChip();
+          addVersionsChip();
+          addStateChip();
+          addStatusChip();
         }
         var metaEl = document.createElement("div");
         metaEl.className = "post-meta";
-        var chipWrap = document.createElement("div");
-        chipWrap.className = "post-meta-chips";
-        chips.forEach(function (label) {
-          var chip = document.createElement("span");
-          chip.className = "proj-filter-chip";
-          chip.textContent = label;
-          chipWrap.appendChild(chip);
-        });
         metaEl.appendChild(chipWrap);
         host.appendChild(metaEl);
       }
